@@ -1,0 +1,81 @@
+利用Bootstrap建立輪播區塊
+
+相片輪播元件是使用 class="carousel slide"
+
+　　　　　　　　　　　　　↓建立輪播元件　　　　　↓立即啟用功能　　　　↓輪播速率（毫秒）
+<div id="photoCarousel" class="carousel slide" data-ride="carousel" data-interval="3000">
+
+</div>
+
+加入相片清單及控制介面
+輪播元件div區塊中通常會包含3部分:
+
+1.相片清單:使用類別名稱為carousel-inner的div區塊。
+
+<div class="carousel-inner"> ←代表相片清單的區塊
+　<div class="item active"> ←有active類別是播放的第1張
+　　<img src="--------">
+　</div>
+　　--------- <!-- 其他相片 --> ------------
+</div>
+
+2.相片選擇鈕:出現在輪播的元件下方，用以選取要檢視項目的元件。
+
+<ol class="carousel-indicators">　　　　　　　　　　　↓配合輪播元件指定第一個
+<li data-target="#photoCarousel" data-slide-to="0" class="active"></li>
+<li data-target="#photoCarousel" data-slide-to="1"></li>
+<li data-target="#photoCarousel" data-slide-to="2"></li>
+</ol>
+
+ol元素需要使用carousel-indicators類別。
+li項目則設定data-target，套用至輪播元件設定的ID。
+
+3.相片瀏覽鈕:指定顯示在輪播元件兩側。
+
+a元素加上carousel-control
+href設為輪播的id元件
+data-slide表示為上一張或下一張
+
+<!-- 向左鈕(上一張) -->
+<a class="left carousel-control" href="#photoCarousel" role="button" data-slide="prev">
+　<span class="glyphicon glyphicon-chevron-left"></span>
+</a>
+<!-- 向右鈕(下一張) -->
+<a class="right carousel-control" href="#photoCarousel" role="button" data-slide="next">
+　<span class="glyphicon glyphicon-chevron-right"></span>
+</a>
+
+------------------------------------------------------
+輪播元件整合使用
+
+<div id="photoCarousel" class="carousel slide" data-ride="carousel" data-interval="3000">
+　<!-- Indicators 瀏覽控制 -->
+　<ol class="carousel-indicators">
+　　<li data-target="#photoCarousel" data-slide-to="0" class="active"></li>
+　　<li data-target="#photoCarousel" data-slide-to="1"></li>
+　　<li data-target="#photoCarousel" data-slide-to="2"></li>
+　</ol>
+　
+　<!-- 建立相片清單 -->
+　<div class="carousel-inner"> 
+　　<div class="item active">
+　　　<img src="--------">
+　　</div>
+　　<div class="item">
+　　　<img src="--------">
+　　</div>
+　　<div class="item">
+　　　<img src="--------">
+　　</div>　
+　</div>
+
+　<!-- 上一張／下一張控制 -->
+　<!-- 向左鈕(上一張) -->
+　<a class="left carousel-control" href="#photoCarousel" role="button" data-slide="prev">
+　　<span class="glyphicon glyphicon-chevron-left"></span>
+　</a>
+　<!-- 向右鈕(下一張) -->
+　<a class="right carousel-control" href="#photoCarousel" role="button" data-slide="next">
+　　<span class="glyphicon glyphicon-chevron-right"></span>
+　</a>
+</div>

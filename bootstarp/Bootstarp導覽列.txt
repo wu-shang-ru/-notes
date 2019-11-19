@@ -1,0 +1,60 @@
+最一開始網站通常會有的就是導覽列，Bootstarp支援響應式的導覽列。
+
+首先利用標籤<nav>去做框架把其餘內容囊括在內
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+navbar指定為導覽列
+navbar-expand{-sm|-md|-lg|-xl}為不同視窗大小所變化的設定
+navbar-light bg-light導覽列的文字和背景
+
+--------------------------------------------------------------------
+再來是標頭的部分使用<a>標籤讓使用者可以點選並回到首頁之類的選項
+<a class="navbar-brand" href="#">Navbar</a>
+
+navbar-brand設定為標頭
+
+--------------------------------------------------------------------
+第三個是特別為響應式設計的按鈕-->漢堡按鈕
+<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+  <span class="navbar-toggler-icon"></span>
+</button>
+  
+navbar-toggler設定為如果畫面縮小時，可以讓各個按鈕消失，並由漢堡按鈕開啟
+data-target及aria-controls設定至指定的<nav>ID，用來控制此物件
+
+接下來是內部資料的部分，由範例呈現：
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Navbar</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#">Link</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="#">Action</a>
+          <a class="dropdown-item" href="#">Another action</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
