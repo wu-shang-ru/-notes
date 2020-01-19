@@ -8,5 +8,7 @@ git status -s 	(較簡短狀況)
 
 git commit -m 'xxx' (註解)
 
-git remote add origin git@github.com:tianqixin/runoob-git-test.git
 git push origin master (推送到 Github)
+git push -u origin XXX
+如果打master 就是從本地端master推到雲端master
+如果打dev 則類推
