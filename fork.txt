@@ -19,7 +19,7 @@ git push -u origin master
 git remote -v   做遠端的檢查
 會看到本地端的origin 及 剛剛新增的上游 upstream 
 
-git pull upstream mastar
+git pull upstream master
 可以將上游的資料更新至本地端
 
 git push -u origin master
