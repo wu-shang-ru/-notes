@@ -14,20 +14,20 @@
   
   我們首先創建一個.js檔，名稱隨興取就好，這是等等給我們練習跑程式用。
 
-  - 首先我們先輸入一段：
+- 首先我們先輸入一段：
 
   ```
   console.log('Hello, World');
   ```
 
-  然後我們就可以利用node執行。
+- 然後我們就可以利用node執行：
 
   ```
   node helloworld.js
   Hello, World
   ```
 
-  如果需要引數也可以調入：
+- 如果需要引數也可以調入：
 
   ```
   process.argv.forEach(function(arg, index) {
@@ -35,7 +35,7 @@
   });
   ```
 
-  得出：
+- 得出：
 
   ```
   C:\workspace>node helloworld.js arg1 arg2
@@ -45,7 +45,7 @@
   arg2, 3
   ```
 
-  - 在ECMAScript 5的嚴格模式下，不可替未宣告的變數賦予值。
+- 在ECMAScript 5的嚴格模式下，不可替未宣告的變數賦予值：
 
   ```
   'use strict';
