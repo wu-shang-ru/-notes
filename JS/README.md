@@ -3,4 +3,4 @@
 ***
 
 - 這些東西不簡單
-  - 從 ECMAScript 5 開始
+  - [從 ECMAScript 5 開始](https://github.com/wu-shang-ru/notes/tree/master/JS/part1/startECMAScript5)
