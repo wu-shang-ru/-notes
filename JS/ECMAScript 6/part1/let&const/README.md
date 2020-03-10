@@ -1,4 +1,4 @@
-- 閱讀[良葛格](https://openhome.cc/Gossip/ECMAScript/JSON.html)的文件後將筆記稍做簡短修正。
+- 閱讀[良葛格](https://openhome.cc/Gossip/ECMAScript/LetConst.html)的文件後將筆記稍做簡短修正。
 
 - 使用Node.js來做練習，如果沒有node.js先安裝完畢後再來開始往下閱讀。
 
