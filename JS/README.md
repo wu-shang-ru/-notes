@@ -6,7 +6,7 @@
 
 ***
 
-###### ECMAScript 5
+### ECMAScript 5
 
 - 這些東西不簡單
   - [從 ECMAScript 5 開始](https://github.com/wu-shang-ru/notes/tree/master/JS/ECMAScript%205/part1/startECMAScript5)
@@ -29,7 +29,7 @@
   - 名稱空間管理
   - [輕量資料格式 JSON](https://github.com/wu-shang-ru/notes/tree/master/JS/ECMAScript%205/part3/JSON)
   
-###### ECMAScript 6
+### ECMAScript 6
 
 - 這些東西簡單了嗎?
   - [使用 let 與 const 宣告變數](https://github.com/wu-shang-ru/notes/tree/master/JS/ECMAScript%206/part1/let%26const)
