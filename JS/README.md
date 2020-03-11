@@ -34,6 +34,8 @@
 - 這些東西簡單了嗎?
   - [使用 let 與 const 宣告變數](https://github.com/wu-shang-ru/notes/tree/master/JS/ECMAScript%206/part1/let%26const)
   - [增強的數值與字串](https://github.com/wu-shang-ru/notes/tree/master/JS/ECMAScript%206/part1/NumberString)
+  - [Destructuring、Rest 與 Spread 運算](https://github.com/wu-shang-ru/notes/tree/master/JS/ECMAScript%206/part1/Destructuring)
   
 - 不再只是 function 了！
-  - 函式的增強
+  - [函式的增強](https://github.com/wu-shang-ru/notes/tree/master/JS/ECMAScript%206/part2/EnhancedFunction)
+  - [箭號函式](https://github.com/wu-shang-ru/notes/tree/master/JS/ECMAScript%206/part2/ArrowFunction)
