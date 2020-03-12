@@ -33,7 +33,7 @@ false
 'Symbol(for each method of xxx)'
 ```
 
-##### Symbol.for
+- #### Symbol.for
 
 這是另外一種建立Symbol的方法，當你給定一個字串描述，它會在全域的符號註冊表（Symbol Registry）查找，如果有相同描述的字串就傳回，如果沒有就依指定的字串建立一個Symbol。
 
@@ -52,7 +52,7 @@ false
 
 本來是字串描述不代表Symbol本身，但現在卻用描述查找Symbol，確實頗怪，但目前階段就只能先這樣記。也應該盡可能避免使用此方法，畢竟符號註冊表建立在全域上，除非真的有很好的理由。
 
-##### Symbol.iterator
+- #### Symbol.iterator
 
 ES6 也有一些 Symbol 上的內建特性儲存著符號，像是 Symbol.iterator 代表著迭代器符號：
 
@@ -78,7 +78,7 @@ undefined
 { value: undefined, done: true }
 ```
 
-##### Symbol.keyFor
+- #### Symbol.keyFor
 
 可以當作查找Symbol有無存在全域符號註冊表中的方法，如果有就會傳回Symbol字串描述，沒有就會回傳undefined：
 
