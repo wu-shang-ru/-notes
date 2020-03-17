@@ -1,0 +1,69 @@
+//catch error log
+var domain = document.domain;
+
+//cdn
+$(document).ready(function() {
+    if (domain == 'www.trplus.com.tw') {
+        //1
+        $('img').each(function() {
+            if ($(this).attr('src').indexOf('http://pcm.testritegroup.com.productimages.s3-website-us-west-2.amazonaws.com/') >= 0) {
+                newsrc = $(this).attr('src').replace('http://pcm.testritegroup.com.productimages.s3-website-us-west-2.amazonaws.com/', 'https://pcm.trplus.com.tw/');
+                $(this).attr('src', newsrc);
+            }
+        });
+        $('img').each(function() {
+            if ($(this).attr('src').indexOf('https://pcm.testritegroup.com.productimages.s3-website-us-west-2.amazonaws.com/') >= 0) {
+                newsrc = $(this).attr('src').replace('https://pcm.testritegroup.com.productimages.s3-website-us-west-2.amazonaws.com/', 'https://pcm.trplus.com.tw/');
+                $(this).attr('src', newsrc);
+            }
+        });
+
+        //2
+        $('img').each(function() {
+            if ($(this).attr('src').indexOf('http://pcm.testritegroup.com.productimages.s3.amazonaws.com/') >= 0) {
+                newsrc = $(this).attr('src').replace('http://pcm.testritegroup.com.productimages.s3.amazonaws.com/', 'https://pcm.trplus.com.tw/');
+                $(this).attr('src', newsrc);
+            }
+        });
+        $('img').each(function() {
+            if ($(this).attr('src').indexOf('https://pcm.testritegroup.com.productimages.s3.amazonaws.com/') >= 0) {
+                newsrc = $(this).attr('src').replace('https://pcm.testritegroup.com.productimages.s3.amazonaws.com/', 'https://pcm.trplus.com.tw/');
+                $(this).attr('src', newsrc);
+            }
+        });
+    }
+});
+
+
+$(window).on('load', function(){
+    if (domain == 'www.trplus.com.tw') {
+        //1
+        $('img').each(function() {
+            if ($(this).attr('src').indexOf('http://pcm.testritegroup.com.productimages.s3-website-us-west-2.amazonaws.com/') >= 0) {
+                newsrc = $(this).attr('src').replace('http://pcm.testritegroup.com.productimages.s3-website-us-west-2.amazonaws.com/', 'https://pcm.trplus.com.tw/');
+                $(this).attr('src', newsrc);
+            }
+        });
+        $('img').each(function() {
+            if ($(this).attr('src').indexOf('https://pcm.testritegroup.com.productimages.s3-website-us-west-2.amazonaws.com/') >= 0) {
+                newsrc = $(this).attr('src').replace('https://pcm.testritegroup.com.productimages.s3-website-us-west-2.amazonaws.com/', 'https://pcm.trplus.com.tw/');
+                $(this).attr('src', newsrc);
+            }
+        });
+
+        //2
+        $('img').each(function() {
+            if ($(this).attr('src').indexOf('http://pcm.testritegroup.com.productimages.s3.amazonaws.com/') >= 0) {
+                newsrc = $(this).attr('src').replace('http://pcm.testritegroup.com.productimages.s3.amazonaws.com/', 'https://pcm.trplus.com.tw/');
+                $(this).attr('src', newsrc);
+            }
+        });
+        $('img').each(function() {
+            if ($(this).attr('src').indexOf('https://pcm.testritegroup.com.productimages.s3.amazonaws.com/') >= 0) {
+                newsrc = $(this).attr('src').replace('https://pcm.testritegroup.com.productimages.s3.amazonaws.com/', 'https://pcm.trplus.com.tw/');
+                $(this).attr('src', newsrc);
+            }
+        });
+    }
+});
+//console.log(domain);

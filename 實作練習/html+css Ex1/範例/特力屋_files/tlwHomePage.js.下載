@@ -1,0 +1,1187 @@
+﻿(function() {
+    function tlwHome() {
+
+        //define object
+        var that = this;
+        var _mgr = new function() {};
+
+        var isMobile = mobilecheck();
+        var isGetTLWDropMenuJSON = false;
+        var $kvBannerOwl;
+
+        /* Ajax */
+        _mgr.Ajax = new function() {
+
+        };
+
+        /* Ajax CallBack Display Content */
+        that.AjaxCallBack = new function() {
+
+        };
+
+        /* BuildUpHtmlString */
+        that.BuildHTML = new function() {
+
+            //處理主要main adv輪播
+            this.mainAdv = function(Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if(jsonObj.length == 0){
+                    return false;
+                }
+
+                for(var i=0, j=jsonObj.length; i<j; i++){
+
+                    var isTargetBlank = (jsonObj[i].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                    var getMobileImg = (jsonObj[i].MobileImage == '') ? jsonObj[i].Image : jsonObj[i].MobileImage;
+
+
+
+                    sHtml[sHtml.length] = '<a href="'+ jsonObj[i].Link +'" class="item banner-top__item" title="'+ jsonObj[i].H1Heading +'" '+ isTargetBlank +'>';
+                    sHtml[sHtml.length] = '    <div class="banner-top__img">';
+                    sHtml[sHtml.length] = '        <img src="'+ getMobileImg +'" class="d-lg-none" alt="'+ jsonObj[i].H1Heading +'"/>';
+                    sHtml[sHtml.length] = '        <img src="'+ jsonObj[i].Image +'" class="d-none d-lg-block" alt="'+ jsonObj[i].H1Heading +'"/>';
+                    sHtml[sHtml.length] = '    </div>';
+                    sHtml[sHtml.length] = '    <div class="container banner-top__container">';
+
+
+                    if(jsonObj[i].TextAlign)
+                    {
+                        switch (jsonObj[i].TextAlign) {
+                            case ('Right'):
+                                {
+                                    sHtml[sHtml.length] = '    <div class="banner-top__info banner-top__info--right">';
+                                    break;
+                                };
+                            case ('Center'):
+                                {
+                                    sHtml[sHtml.length] = '    <div class="banner-top__info banner-top__info--center">';
+                                    break;
+                                };
+                            case ('Left'):
+                                {
+                                    sHtml[sHtml.length] = '    <div class="banner-top__info banner-top__info--left">';
+                                    break;
+                                };
+                            default:
+                            {
+                                sHtml[sHtml.length] = '    <div class="banner-top__info banner-top__info--right">';
+                                break;
+                            };
+                        };
+                    }
+                    else{
+                        sHtml[sHtml.length] = '    <div class="banner-top__info banner-top__info--center">';
+                    }
+
+                    sHtml[sHtml.length] = '            <div class="banner-top__title">'+ jsonObj[i].H1Heading +'</div>';
+                    sHtml[sHtml.length] = '            <div class="banner-top__subtitle">'+ jsonObj[i].H2Heading +'<br/>'+ jsonObj[i].H3Heading +'</div>';
+
+                    if(jsonObj[i].ShopNow != ''){
+                        sHtml[sHtml.length] = '            <div class="banner-top__btn">'+ jsonObj[i].ShopNow +'<i class="fa fa-angle-right"></i></div>';
+                    }
+
+                    sHtml[sHtml.length] = '        </div>';
+                    sHtml[sHtml.length] = '    </div>';
+                    sHtml[sHtml.length] = '</a>';
+
+                }
+
+                $('.banner-top__owl-carousel').html('').append(sHtml.join(''));
+                //$kvBannerOwl.trigger('refresh.owl.carousel');
+                //$('#oc-slider').trigger('refresh.owl.carousel');
+
+                var bannerTopOwl =  $('.banner-top__owl-carousel.owl-carousel');
+                bannerTopOwl.owlCarousel({
+                    loop: true,
+                    margin: 0,
+                    dots: true,
+                    nav:true,
+                    autoplay: true,
+                    autoplayTimeout: 5500,
+                    autoplayHoverPause: true,
+                    smartSpeed: 700,
+                    navText: ['<i class="fa fa-angle-left" aria-hidden="true"></i>', '<i class="fa fa-angle-right" aria-hidden="true"></i>'],
+                    responsiveClass:true,
+                    responsive : {
+                        0:{
+                            items:1,
+                            slideBy: 1
+                        }
+                    }
+                })
+            };
+
+            //處理Threet tab
+            this.threeTabLink = function(Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+                var tabAry = ['', 'A', 'B'];
+                var bgColorAry = ['#ed6d00', '#4a4a4a', '#f7f7f7'];
+                var fontColorAry = ['style=""', 'style=""', 'style="color:#000;"'];
+
+                if(jsonObj.length == 0){
+                    return false;
+                }
+
+                for(var i=0, j=tabAry.length; i<j; i++){
+
+                    var isTargetBlank = (jsonObj[0]['LinkTarget' + tabAry[i]] == 'Y') ? ' target="_blank"' : '';
+                    var getMobileImg = (jsonObj[0]['MobileImage' + tabAry[i]] == '') ? jsonObj[0]['Image' + tabAry[i]] : jsonObj[0]['MobileImage' + tabAry[i]];
+
+                    sHtml[sHtml.length] = '<div class="col-lg-4 hot-link__item" style="background: '+ bgColorAry[i] +';" title="'+ jsonObj[0]['H1Heading' + tabAry[i]] +'" '+ isTargetBlank +'>';
+                    sHtml[sHtml.length] = '    <a href="'+ jsonObj[0]['Link' + tabAry[i]] +'" '+ fontColorAry[i] +'>';
+                    sHtml[sHtml.length] = '        <h2>'+ jsonObj[0]['H1Heading' + tabAry[i]] +'</h2>';
+                    sHtml[sHtml.length] = '        <h3>'+ jsonObj[0]['H2Heading' + tabAry[i]] +'</h3>';
+                    sHtml[sHtml.length] = '    </a>';
+                    sHtml[sHtml.length] = '</div>';
+                    
+                }
+
+                $('.brand__hotlink').html('').append(sHtml.join(''));
+            };
+
+            //處理主課程
+            this.mainCourse = function(Obj) {
+                var jsonObj;
+
+                if(Obj.length > 0){
+                    jsonObj = Obj[0];
+
+                    var sHtml = [];
+                    
+                    var isTargetBlank = (jsonObj.LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                    var whichImg = '';
+
+                    if($('body').hasClass('device-lg')){
+                        whichImg = jsonObj.Image;
+                    }
+                    else{
+                        whichImg = (jsonObj.MobileImage == '')? jsonObj.Image : jsonObj.MobileImage;
+                    }
+
+                    sHtml[sHtml.length] = '<div class="banner-square__bar-img">';
+                    sHtml[sHtml.length] = '    <a href="'+ jsonObj.Link +'" title="'+ jsonObj.H1Heading +'" '+ isTargetBlank +'><img src="'+ whichImg +'" alt="'+ jsonObj.H1Heading +'"/></a>';
+                    sHtml[sHtml.length] = '</div>';
+                    sHtml[sHtml.length] = '<div class="banner-square__bar-info">';
+                    sHtml[sHtml.length] = '    <div class="banner-square__bar-title">'+ jsonObj.H1Heading +'</div>';
+                    sHtml[sHtml.length] = '    <div class="banner-square__bar-text">'+ jsonObj.H2Heading +'</div>';
+                    sHtml[sHtml.length] = '</div>';
+                    sHtml[sHtml.length] = '<div class="banner-square__bar-btns">';
+                    sHtml[sHtml.length] = '    <a href="'+ jsonObj.Link +'" class="banner-square__bar-btn" title="'+ jsonObj.H1Heading +'" '+ isTargetBlank +'>了解更多<i class="fa fa-angle-right"></i></a>';
+                    sHtml[sHtml.length] = '</div>';
+                    
+                    $('.brand__event-mainCourse').html('').append(sHtml.join(''));
+
+                }
+            };
+
+            //處理其他課程
+            this.otherCourse = function(Obj) {
+                var jsonObj;
+
+                if(Obj.length > 0){
+                    jsonObj = Obj[0];
+                    var tabAry = ['', 'A', 'B'];
+
+                    for(var i=0, j=tabAry.length; i<j; i++){
+                        var sHtml = [];
+                        
+
+                        //console.log('AA = ' + jsonObj['LinkTarget' + tabAry[i]].toUpperCase() );
+
+
+                        var isTargetBlank = (jsonObj['LinkTarget' + tabAry[i]].toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                        var whichImg = '';
+                        
+                        if($('body').hasClass('device-lg')){
+                            whichImg = jsonObj['Image' + tabAry[i]];
+                        }
+                        else{
+                            whichImg = (jsonObj['MobileImage' + tabAry[i]] == '') ? jsonObj['Image' + tabAry[i]] : jsonObj['MobileImage' + tabAry[i]];
+                        }
+                        
+
+                        sHtml[sHtml.length] = '<a href="'+ jsonObj['Link' + tabAry[i]] +'"  title="'+ jsonObj['H1Heading' + tabAry[i]] +'" '+ isTargetBlank +' style="width: 100%;">';
+                        sHtml[sHtml.length] = '    <div class="banner-square__img">';
+                        sHtml[sHtml.length] = '        <img src="'+ whichImg +'"/>';
+                        sHtml[sHtml.length] = '    </div>';
+                        sHtml[sHtml.length] = '    <div class="banner-square__title">'+ jsonObj['H1Heading' + tabAry[i]] +'</div>';
+                        sHtml[sHtml.length] = '</a>';
+
+                        
+                        $('.brand__event-otherCourse' + tabAry[i]).html('').append(sHtml.join(''));
+                    }
+                }
+            };
+
+            //處理熱門活動
+            this.hotEvent = function(Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if(jsonObj.length == 0){
+                    return false;
+                }
+
+                for(var i=0, j=jsonObj.length; i<j; i++){
+
+                    var isTargetBlank = (jsonObj[i].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                    var whichImg = '';
+                    
+                    if($('body').hasClass('device-lg')){
+                        whichImg = jsonObj[i].Image;
+                    }
+                    else{
+                        whichImg = (jsonObj[i].MobileImage != '')? jsonObj[i].MobileImage : jsonObj[i].Image;
+                    }
+
+
+                    sHtml[sHtml.length] = '<a href="'+ jsonObj[i].Link +'" class="col-12 col-lg-6 banner-block__item" title="'+ jsonObj[i].H1Heading +'" '+ isTargetBlank +'>';
+                    sHtml[sHtml.length] = '    <div class="banner-block__img">';
+                    sHtml[sHtml.length] = '        <img src="'+ whichImg +'" alt="'+ jsonObj[i].H1Heading +'"/>';
+                    sHtml[sHtml.length] = '    </div>';
+                    sHtml[sHtml.length] = '    <div class="banner-block__title">'+ jsonObj[i].H1Heading +'</div>';
+                    sHtml[sHtml.length] = '</a>';
+
+                    /*
+                    sHtml[sHtml.length] = '<div class="entry clearfix">';
+                    sHtml[sHtml.length] = '    <div class="entry-image">';
+                    sHtml[sHtml.length] = '        <a href="'+ jsonObj[i].Link +'" title="'+ jsonObj[i].H1Heading +'">';
+                    sHtml[sHtml.length] = '            <img class="image_fade" src="'+ whichImg +'" alt="'+ jsonObj[i].H1Heading +'">';
+                    sHtml[sHtml.length] = '        </a>';
+                    sHtml[sHtml.length] = '    </div>';
+                    sHtml[sHtml.length] = '    <div class="entry-title">';
+                    sHtml[sHtml.length] = '        <h3><a href="'+ jsonObj[i].Link +'" title="'+ jsonObj[i].H1Heading +'">'+ jsonObj[i].H1Heading +'</a></h3>';
+                    sHtml[sHtml.length] = '    </div>';
+                    sHtml[sHtml.length] = '</div>';
+                    */
+                }
+
+                $('.brand__action .banner-block__row').html('').append(sHtml.join(''));
+            };
+
+            this.EventTitle = function(Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if (jsonObj.length > 0)
+                {
+                    $('.tlw_EventTitle').text(jsonObj[0].Text);
+                }
+                else
+                {
+                    $('.tlw_EventTitle').text('限時強檔活動');
+                }
+                //$('.index__popular').append(sHtml.join(''));
+            };
+            
+
+            //處理主要sub adv輪播
+            this.SubAdv = function(Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if(jsonObj.length == 0){
+                    return false;
+                }
+
+                for(var i=0, j=jsonObj.length; i<j; i++){
+
+                    var isTargetBlank = (jsonObj[i].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                    var getMobileImg = (jsonObj[i].MobileImage == '') ? jsonObj[i].Image : jsonObj[i].MobileImage;
+
+
+                    sHtml[sHtml.length] = '<a href="'+ jsonObj[i].Link +'" class="item banner-mid__item" title="'+ jsonObj[i].H1Heading +'" style="background: #ffffff" '+ isTargetBlank +'>';
+                    sHtml[sHtml.length] = '    <div class="banner-mid__img">';
+                    sHtml[sHtml.length] = '        <img src="'+ getMobileImg +'" class="d-lg-none" alt="'+ jsonObj[i].H1Heading +'"/>';
+                    sHtml[sHtml.length] = '        <img src="'+ jsonObj[i].Image +'" class="d-none d-lg-block" alt="'+ jsonObj[i].H1Heading +'"/>';
+                    sHtml[sHtml.length] = '    </div>';
+
+                    switch (jsonObj[i].TextAlign) {
+                        case ('Right'):
+                            {
+                                sHtml[sHtml.length] = '    <div class="banner-mid__info banner-mid__info--right">';
+                                break;
+                            };
+                        case ('Center'):
+                            {
+                                sHtml[sHtml.length] = '    <div class="banner-mid__info banner-mid__info--center">';
+                                break;
+                            };
+                        case ('Left'):
+                            {
+                                sHtml[sHtml.length] = '    <div class="banner-mid__info banner-mid__info--left">';
+                                break;
+                            };
+                    };
+
+                    sHtml[sHtml.length] = '        <div class="banner-mid__title">'+ jsonObj[i].H1Heading +'</div>';
+                    sHtml[sHtml.length] = '        <div class="banner-mid__subtitle">'+ jsonObj[i].H2Heading +'</div>';
+                    sHtml[sHtml.length] = '        <div class="banner-mid__btn">'+ jsonObj[i].ShopNow +'<i class="fa fa-angle-right"></i></div>';
+                    sHtml[sHtml.length] = '    </div>';
+                    sHtml[sHtml.length] = '</a>';
+
+                }
+
+                $('.banner-mid__owl-carousel').html('').append(sHtml.join(''));
+                var bannerMidOwl =  $('.banner-mid__owl-carousel.owl-carousel');
+                bannerMidOwl.owlCarousel({
+                    loop: true,
+                    margin: 0,
+                    dots: true,
+                    nav:true,
+                    navText: ['<i class="fa fa-angle-left" aria-hidden="true"></i>', '<i class="fa fa-angle-right" aria-hidden="true"></i>'],
+                    responsiveClass:true,
+                    responsive : {
+                        0:{
+                            items:1,
+                            slideBy: 1
+                        }
+                    }
+                })
+
+            };
+
+            //處理 json_trplusAdv.tlw_HotProdTitle
+            this.HotProdTitle = function(Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if (jsonObj.length > 0) {
+                    $('.hotsale__products__title').text(jsonObj[0].Text);
+                }
+            };
+
+            //處理 json_trplusAdv.tlw_HotProd
+            //這裡有兜商品
+            this.HotProd = function(Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if (jsonObj.length > 0) {
+
+                    var gtmProdImpressionsStart;
+                    var gtmProdImpressionsEnd;
+
+                    for (var i = 0, j = jsonObj.length; i < j; i++) {
+
+
+                        sHtml[sHtml.length] = '<div class="item product-item gtmImpressions_prod" style="width: 100%;">';
+                        sHtml[sHtml.length] = '    <div class="product-item__img">';
+
+
+                        var setGDWhichURL = '/p/' + jsonObj[i].GDID;
+
+                        if(jsonObj[i].GDURL && jsonObj[i].GDURL != '')
+                        {
+                            setGDWhichURL = jsonObj[i].GDURL;
+                        }
+
+                        /*
+                        if(jsonObj[i].GDURL)
+                        {
+                            sHtml[sHtml.length] = '        <a href="/p/' + jsonObj[i].GDID + '" GDID="'+ jsonObj[i].GDID +'" class="gtmImpressions_prod-URL" title="'+ jsonObj[i].GDNM +'" isScupio="N"><img src="'+ jsonObj[i].GDMainImg +'" class="img-fluid" alt="'+ jsonObj[i].GDNM +'"/></a>';
+                        }
+                        else
+                        {
+                            sHtml[sHtml.length] = '        <a href="/p/' + jsonObj[i].GDID + '" GDID="'+ jsonObj[i].GDID +'" class="gtmImpressions_prod-URL" title="'+ jsonObj[i].GDNM +'" isScupio="N"><img src="'+ jsonObj[i].GDMainImg +'" class="img-fluid" alt="'+ jsonObj[i].GDNM +'"/></a>';
+                        }
+                        */
+
+                        sHtml[sHtml.length] = '        <a href="' + setGDWhichURL + '" GDID="'+ jsonObj[i].GDID +'" class="gtmImpressions_prod-URL" title="'+ jsonObj[i].GDNM +'" isScupio="N"><img src="'+ jsonObj[i].GDMainImg +'" class="img-fluid" alt="'+ jsonObj[i].GDNM +'"/></a>';
+
+
+                        var showWhichProdLabelText = (discountPercentageOff(jsonObj[i].GDCPRC, jsonObj[i].GDPRC, jsonObj[i].GDPPRC));
+                        if(showWhichProdLabelText <= 0)
+                        {
+                            showWhichProdLabelText = 'HOT';
+                        }
+
+                        if(jsonObj[i].Prodlabel)
+                        {
+                            switch(jsonObj[i].Prodlabel.toUpperCase())
+                            {
+                                case 'HOT':
+                                    sHtml[sHtml.length] = '        <div class="product-item__label">HOT</div>';
+                                    break;
+                                case 'NEW':
+                                    sHtml[sHtml.length] = '        <div class="product-item__label new">NEW</div>';
+                                    break;
+                                case 'FASTSHIPPING':
+                                    sHtml[sHtml.length] = '        <div class="product-item__label new">火速配</div>';
+                                    break;
+                                case 'SALE':
+                                default:
+                                    sHtml[sHtml.length] = '        <div class="product-item__label">'+ showWhichProdLabelText +'</div>';
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            sHtml[sHtml.length] = '        <div class="product-item__label">'+ showWhichProdLabelText +'</div>';
+                        }
+
+                        sHtml[sHtml.length] = '    </div>';
+                        sHtml[sHtml.length] = '    <div class="product-item__color clearfix">';
+                        sHtml[sHtml.length] = '' + showGDChannelIcon(jsonObj[i].GDChannel);
+                        
+                        
+                        var getSPUGOODIDThumb = [];
+                        var getSPUColorThumb = [];
+
+                        if (jsonObj[i].GDImgGOODIDThumb && jsonObj[i].GDImgGOODIDThumb != '') {
+                            getSPUGOODIDThumb = jsonObj[i].GDImgGOODIDThumb.split(',');
+                            getSPUColorThumb = jsonObj[i].GDImgColorThumb.split(',');
+
+                            var maxGetSPUGOODIDThumbLength;
+
+                            if(getSPUGOODIDThumb.length >=4){
+                                maxGetSPUGOODIDThumbLength = 4;
+                            }
+                            else{
+                                maxGetSPUGOODIDThumbLength = getSPUGOODIDThumb.length;
+                            }
+
+
+                            if(maxGetSPUGOODIDThumbLength == 1)
+                            {
+                                //sHtml[sHtml.length] = '        <div class="btn product-item__color--img--nocursor" data-toggle="button"><img src="/_ui/responsive/theme-trplus/images/spu_empty.png"></div>';
+                            }
+                            else
+                            {
+                                for (var s = 0, t = maxGetSPUGOODIDThumbLength; s < t; s++) {
+                                    
+                                    if(s == (maxGetSPUGOODIDThumbLength-1)){
+                                        sHtml[sHtml.length] = '        <div class="btn product-item__color--img d-none d-lg-inline-block" data-toggle="button"><a href="/p/' + getSPUGOODIDThumb[s] + '"><img src="' + getSPUColorThumb[s] + '"  style="width:24px;"/></a></div>';
+                                    }
+                                    else{
+                                        sHtml[sHtml.length] = '        <div class="btn product-item__color--img"><a href="/p/' + getSPUGOODIDThumb[s] + '"><img src="' + getSPUColorThumb[s] + '"  style="width:24px;"/></a></div>';
+                                    }
+                                }
+    
+                                if (getSPUGOODIDThumb.length > 4) {
+                                    sHtml[sHtml.length] = '        <div class="product-item__color--more">+</div>';
+                                }
+                            }
+
+
+                        }
+                        else
+                        {
+                            //sHtml[sHtml.length] = '        <div class="btn product-item__color--img--nocursor" data-toggle="button"><img src="/_ui/responsive/theme-trplus/images/spu_empty.png"></div>';
+                        }
+
+ 
+                        // sHtml[sHtml.length] = '        <div class="btn product-item__color--img" data-toggle="button"><img src="//dummyimage.com/28x15/321/fff" /></div>';
+                        // sHtml[sHtml.length] = '        <div class="btn product-item__color--img" data-toggle="button"><img src="//dummyimage.com/28x15/395/fff" /></div>';
+                        // sHtml[sHtml.length] = '        <div class="btn product-item__color--img" data-toggle="button"><img src="//dummyimage.com/28x15/F23/fff" /></div>';
+                        // sHtml[sHtml.length] = '        <div class="btn product-item__color--img d-none d-lg-inline-block" data-toggle="button"><img src="//dummyimage.com/28x15/535/fff" /></div>';
+                        // sHtml[sHtml.length] = '        <div class="product-item__color--more">+2 more</div>';
+                        sHtml[sHtml.length] = '    </div>';
+
+
+
+                        if(jsonObj[i].GDChannel.toUpperCase().indexOf('TLW') != -1)
+                        {
+                            sHtml[sHtml.length] = '    <a href="' + setGDWhichURL + '" GDID="'+ jsonObj[i].GDID +'" class="product-item__name gtmImpressions_prod-URL" isScupio="N">';
+                            //sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-i-house.svg" />';
+                            sHtml[sHtml.length] = '        <p style="text-indent:0px;">'+ jsonObj[i].GDNM +'</p>';
+                            sHtml[sHtml.length] = '    </a>';
+                        }
+                        else if(jsonObj[i].GDChannel.toUpperCase().indexOf('HOLA') != -1)
+                        {
+                            sHtml[sHtml.length] = '    <a href="' + setGDWhichURL + '" GDID="'+ jsonObj[i].GDID +'" class="product-item__name gtmImpressions_prod-URL" isScupio="N">';
+                            //sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-hola.svg" />';
+                            sHtml[sHtml.length] = '        <p style="text-indent:0px;">'+ jsonObj[i].GDNM +'</p>';
+                            sHtml[sHtml.length] = '    </a>';
+                        }
+                        else if(jsonObj[i].GDChannel.toUpperCase().indexOf('TRPLUS') != -1)
+                        {
+                            sHtml[sHtml.length] = '    <a href="' + setGDWhichURL + '" GDID="'+ jsonObj[i].GDID +'" class="product-item__name gtmImpressions_prod-URL" isScupio="N">';
+                            //sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-testrite+.svg" />';
+                            sHtml[sHtml.length] = '        <p style="text-indent:0px;">'+ jsonObj[i].GDNM +'</p>';
+                            sHtml[sHtml.length] = '    </a>';
+                        }
+                        else
+                        {
+                            sHtml[sHtml.length] = '    <a href="' + setGDWhichURL + '" GDID="'+ jsonObj[i].GDID +'" class="product-item__name gtmImpressions_prod-URL" isScupio="N">';
+                            sHtml[sHtml.length] = '        <p style="text-indent:0px;">'+ jsonObj[i].GDNM +'</p>';
+                            sHtml[sHtml.length] = '    </a>';
+                        }
+
+
+
+                        /*
+                        switch(jsonObj[i].GDChannel.toUpperCase())
+                        {
+                            case 'TLW':
+                                sHtml[sHtml.length] = '    <a href="/p/' + jsonObj[i].GDID + '" class="product-item__name">';
+                                sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-i-house.svg" />';
+                                sHtml[sHtml.length] = '        <p>'+ jsonObj[i].GDNM +'</p>';
+                                sHtml[sHtml.length] = '    </a>';
+                                break;
+                            case 'HOLA':
+                                sHtml[sHtml.length] = '    <a href="/p/' + jsonObj[i].GDID + '" class="product-item__name">';
+                                sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-hola.svg" />';
+                                sHtml[sHtml.length] = '        <p>'+ jsonObj[i].GDNM +'</p>';
+                                sHtml[sHtml.length] = '    </a>';
+                                break;
+                            case 'TRPLUS':
+                                sHtml[sHtml.length] = '    <a href="/p/' + jsonObj[i].GDID + '" class="product-item__name">';
+                                sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-testrite+.svg" />';
+                                sHtml[sHtml.length] = '        <p>'+ jsonObj[i].GDNM +'</p>';
+                                sHtml[sHtml.length] = '    </a>';
+                                break;
+                            default:
+                            sHtml[sHtml.length] = '    <a href="/p/' + jsonObj[i].GDID + '" class="product-item__name">';
+                            sHtml[sHtml.length] = '        <p style="text-indent:0px;">'+ jsonObj[i].GDNM +'</p>';
+                            sHtml[sHtml.length] = '    </a>';
+                        }
+                        */
+
+
+
+
+
+                        sHtml[sHtml.length] = '    <div class="product-item__rating">';
+                        
+                        var getGDAverage = (jsonObj[i].GDAverage == '')? 0 : jsonObj[i].GDAverage;
+                        var getGDAverageStar = parseInt(getGDAverage);
+                        var getGDAverageEmptyStar = (5 - parseInt(getGDAverage));
+
+                        for (var s = 0, t = getGDAverageStar; s < t; s++) {
+                            sHtml[sHtml.length] = '        <i class="fa fa-star fa-fw"></i>';
+                        }
+
+                        for (var s = 0, t = getGDAverageEmptyStar; s < t; s++) {
+                            sHtml[sHtml.length] = '        <i class="fa fa-star fa-fw empty"></i>';
+                        }
+
+                        sHtml[sHtml.length] = '        <span>(' + jsonObj[i].GDVoted + ')</span>';
+                        sHtml[sHtml.length] = '    </div>';
+
+
+
+                        sHtml[sHtml.length] = '    <div class="product-item__price">';
+
+
+                        var gtmProdImpressionsPRC = '';
+
+                        if (jsonObj[i].GDPPRC != '')
+                        {
+                            sHtml[sHtml.length] = '            <ins>$' + Sys_FormatNumber(jsonObj[i].GDPPRC) + '</ins>';
+                            gtmProdImpressionsPRC = jsonObj[i].GDPPRC;
+                        }
+                        else if (jsonObj[i].GDPRC != '')
+                        {
+                            sHtml[sHtml.length] = '            <ins>$' + Sys_FormatNumber(jsonObj[i].GDPRC) + '</ins>';
+                            gtmProdImpressionsPRC = jsonObj[i].GDPRC;
+                        }
+                        else
+                        {
+                            sHtml[sHtml.length] = '            <ins>$' + Sys_FormatNumber(jsonObj[i].GDCPRC) + '</ins>';
+                            gtmProdImpressionsPRC = jsonObj[i].GDCPRC;
+                        }
+
+
+
+
+                        sHtml[sHtml.length] = '                <del>$' + Sys_FormatNumber(jsonObj[i].GDCPRC) + '</del>';
+                        sHtml[sHtml.length] = '        <a class="pull-right d-lg-block prod-item-doAddtoCart" href="#" title="加入購物車" GDID="' + jsonObj[i].GDID + '"  GDPPRC="'+ jsonObj[i].GDPPRC +'" GDPRC="'+ jsonObj[i].GDPRC +'" GDCPRC="'+ jsonObj[i].GDCPRC +'">';
+                        sHtml[sHtml.length] = '            <i class="fa fa-shopping-cart" aria-hidden="true"></i>';
+                        sHtml[sHtml.length] = '        </a>';
+                        // sHtml[sHtml.length] = '        <a class="pull-right prod-item-doLike" href="#" title="收藏商品" GDID="' + GDID + '">';
+                        // sHtml[sHtml.length] = '            <i class="fa fa-heart" aria-hidden="true"></i>';
+                        // sHtml[sHtml.length] = '        </a>';
+                        sHtml[sHtml.length] = '    </div>';
+                        sHtml[sHtml.length] = '</div>';
+
+
+                        if(i==0)
+                        {
+                            gtmProdImpressionsStart = gtmProdImpressions.length;
+                        }
+                        if(i==(j-1))
+                        {
+                            gtmProdImpressionsEnd = gtmProdImpressions.length + 1;
+                        }
+
+
+                        gtmProdImpressions[gtmProdImpressions.length] = {
+                            price: gtmProdImpressionsPRC,
+                            id: jsonObj[i].GDID,
+                            name: jsonObj[i].GDNM,
+                            brand: '',
+                            category: '',
+                            variant: '',
+                            position: '',
+                            list: gtmListNmame,
+                            url: 'https://www.trplus.com.tw/p/' + jsonObj[i].GDID,
+                            quantity: 1
+                        }
+
+                    }
+
+                    $('.hotsale__productsJSON .product-main-owl__carousel').html('').append(sHtml.join(''));
+                    $('.hotsale__productsJSON').show();
+
+
+                    var hotOwl =  $('.hotsale__productsJSON .owl-carousel');
+                    hotOwl.owlCarousel({
+                        loop: false,
+                        margin: 0,
+                        dots: false,
+                        nav:true,
+                        navText: ['<i class="fa fa-angle-left" aria-hidden="true"></i>', '<i class="fa fa-angle-right" aria-hidden="true"></i>'],
+                        responsiveClass:true,
+                        responsive : {
+                            // breakpoint from 0 up
+                            0:{
+                                items:2,
+                                slideBy: 2
+                            },
+                            1022:{
+                                items:5,
+                                slideBy: 5
+                            }
+                
+                        }
+                    })
+
+                        
+                    dataLayer.push({
+                        'event': 'productImpressions',
+                        'ecommerce': {
+                            'currencyCode': 'TWD',
+                            'impressions': gtmProdImpressions.slice(gtmProdImpressionsStart, gtmProdImpressionsEnd)
+                        }
+                    });
+                
+                
+                    $('.hotsale__productsJSON .owl-item:nth-child(1) .product-item').addClass('product-item__left-border');
+                    hotOwl.on('translated.owl.carousel', function(event) {
+                        $('.hot .owl-item .product-item').removeClass('product-item__left-border');
+                        $('.hot .owl-item:nth-child('+(event.item.index+1)+') .product-item').addClass('product-item__left-border');
+                    })
+                }
+            };
+
+            this.TRplusDropMenu = function(ref, JSONData) {
+                console.log('....')
+                console.log(JSONData)
+                
+
+                if (!JSONData) {
+                    return false;
+                }
+
+                if (JSONData && JSONData.length > 0) {
+
+                    var sHtml = [];
+                    //sHtml[sHtml.length] = '<div class="dropdown-content">';
+                    sHtml[sHtml.length] = '    <ul class="menu__lg" style="margin-top:0px;width:1050px;">';
+                    for (var i = 0, j = JSONData.length; i < j; i++) {
+                        sHtml[sHtml.length] = '    <li class="trplus-level-one">';
+
+                        sHtml[sHtml.length] = '        <a href="' + JSONData[i].CateUrl + '" title="' + JSONData[i].CateName + '">' + JSONData[i].CateName + '</a>';
+                        sHtml[sHtml.length] = that.BuildHTML.TLWHolaDropMenu_MSCates(JSONData[i].subNodes);
+
+                        sHtml[sHtml.length] = '    </li>';
+                    }
+                    sHtml[sHtml.length] = '    </ul>';
+                    //sHtml[sHtml.length] = '</div>';
+
+                    $('.menu .active').after(sHtml.join(''));
+                    menu__md();
+
+                }
+            };
+
+            this.TLWHolaDropMenu_MSCates = function(JSONData) {
+                
+                var JSONObj = JSONData;
+                var sHtml = [];
+
+                if (JSONObj.length > 0) {
+
+                    sHtml[sHtml.length] = '<ul class="menu__md">';
+
+                    for (var i = 0, j = JSONObj.length; i < j; i++) {
+                        sHtml[sHtml.length] = '<li>';
+                        sHtml[sHtml.length] = '    <a href="' + JSONObj[i].CateUrl + '" title="' + JSONObj[i].CateName + '" cateID="' + JSONObj[i].CateID + '">' + JSONObj[i].CateName + '</a>';
+
+                        if (JSONObj[i].subNodes.length > 0) {
+                            sHtml[sHtml.length] = '    <ul class="menu__sm">';
+
+                            for (var m = 0, n = JSONObj[i].subNodes.length; m < n; m++) {
+
+                                //console.log(JSONObj[i].subNodes[m].CateID)
+                                sHtml[sHtml.length] = '        <li><a href="' + JSONObj[i].subNodes[m].CateUrl + '" cateID="' + JSONObj[i].subNodes[m].CateID + '">' + JSONObj[i].subNodes[m].CateName + '</a></li>';
+                            }
+
+                            sHtml[sHtml.length] = '    </ul>';
+                        }
+
+                        sHtml[sHtml.length] = '</li>';
+                    }
+
+                    sHtml[sHtml.length] = '</ul>';
+                }
+
+                return sHtml.join('');
+            };
+        };
+
+        /* Functions */
+        that.Funs = new function() {
+
+            this.checkHasData = function(jsonObj) {
+                var DataOK = false;
+                if (jsonObj && jsonObj != null && jsonObj != {} && ConverCont(jsonObj).length > 0) {
+                    DataOK = true;
+                }
+
+                return DataOK;
+            };
+
+            //這裡有兜商品
+            this.ScupioAlsoLike = function(jsonObj) {
+
+
+                (window._bwtm = window._bwtm || []).push({
+                    "mid": 22, 
+                    "pid": "home1",
+                    "uid": trCustID,
+                    // 省略部份貼碼參數，請依各頁需求的參數調整傳遞
+                    "layout": "jsarray",
+                    "count": 15,
+                    "success" : function(products) {
+                        // 以下為組出推薦區塊的範例程式碼
+                        if (products === undefined || products.length === 0) {
+                            return;
+                        }
+                        var i = products[0].length - 1;
+                        var result = [];
+                        var sHtml = [];
+
+                        var gtmProdImpressionsStart;
+                        var gtmProdImpressionsEnd;
+
+                        for (var i = 0, j = products[0].length; i < j; i++) {
+                            var item = products[0][i];
+                            var title = item.title;
+                            var clkurl = item.clickurl;
+                            var imgurl = item.imgurl;
+                            var price = item.price;
+                            var origprice = item.origprice;
+                            //var discountRate = price / origprice * 100;
+                            var discountRate = Math.floor(((origprice - price) / origprice) * 100);
+                            var GDID = $.getALinkHrefQueryByName(clkurl, 'it');
+
+                            var GDChannel = (item.channel) ? item.channel.toUpperCase() : '';
+                            var GDAvgscore = (item.avgscore) ? item.avgscore : '0';
+                            var GDVotenumbers = (item.votenumbers) ? item.votenumbers : '0';
+                            var GDColorstring = (item.colorstring) ? item.colorstring : '';
+
+                            /*
+                            var prdItem = '';
+                            prdItem += '<div class="n-guesslike__item active">';
+                            prdItem += '<a href="' + clkurl + '" target="_blank">';
+                            prdItem += '<div class="img"><img src="' + imgurl + '"></div>';
+                            prdItem += '</a>';
+                            if (discountRate != 100) {
+                                prdItem += '<div class="n-guesslike__discount icon_discount">' + discountRate.toFixed() + ' 折</div>';
+                            };
+                            prdItem += '<div class="n-guesslike__pdName">' + title + '</div>';
+                            prdItem += '<div class="n-guesslike__prc">';
+                            prdItem += '<span class="MR5">售價$' + origprice + '</span>';
+                            prdItem += '<span class="orangeColor">特價</span>';
+                            prdItem += '<span class="orangeColor font_20">$' + price + '</span>';
+                            prdItem += '</div>';
+                            prdItem += '</div>';
+
+                            result.push(prdItem);
+                            */
+
+
+
+                            sHtml[sHtml.length] = '<div class="item product-item gtmImpressions_prod" style="width:100%;">';
+                            sHtml[sHtml.length] = '    <div class="product-item__img">';
+                            sHtml[sHtml.length] = '        <a href="'+ clkurl +'" title="'+ title +'" class="gtmImpressions_prod-URL" isScupio="Y"><img src="'+ imgurl +'" class="img-fluid" alt="'+ title +'"/></a>';
+
+                            if(discountRate > 0)
+                            {
+                                sHtml[sHtml.length] = '        <div class="product-item__label">'+ discountRate + '% Off' +'</div>';
+                            }
+                            //sHtml[sHtml.length] = '        <div class="product-item__label">SALE</div>';
+                            sHtml[sHtml.length] = '    </div>';
+                            sHtml[sHtml.length] = '    <div class="product-item__color clearfix">';
+                            
+                            
+                            if(GDChannel.toUpperCase().indexOf('TLW') != -1)
+                            {
+                                sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/branding_TLW.svg" /><img src="/_ui/responsive/theme-trplus/images/spu_empty_3x24.png" style="width:auto;top:2px;height:24px;float:left;"/>';
+                            }
+                            else if(GDChannel.toUpperCase().indexOf('HOLA') != -1)
+                            {
+                                sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/branding_hola.svg" /><img src="/_ui/responsive/theme-trplus/images/spu_empty_3x24.png" style="width:auto;top:2px;height:24px;float:left;"/>';
+                            }
+                            else if(GDChannel.toUpperCase().indexOf('HOI') != -1)
+                            {
+                                sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/branding_hoi.svg" /><img src="/_ui/responsive/theme-trplus/images/spu_empty_3x24.png" style="width:auto;top:2px;height:24px;float:left;"/>';
+                            }
+                            else if(GDChannel.toUpperCase().indexOf('CB') != -1)
+                            {
+                                sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/crateandbarrel_icon.png" /><img src="/_ui/responsive/theme-trplus/images/spu_empty_3x24.png" style="width:auto;top:2px;height:24px;float:left;"/>';
+                            }
+                            else if(GDChannel.toUpperCase().indexOf('TRPLUS') != -1)
+                            {
+                                sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-testrite+.svg" /><img src="/_ui/responsive/theme-trplus/images/spu_empty_3x24.png" style="width:auto;top:2px;height:24px;float:left;"/>';
+                            }
+                            else
+                            {
+                            }
+
+
+                            if (GDColorstring != '') {
+                                GDColorstring = GDColorstring.split(';');
+
+                                var GDColorMaxLength;
+                                if(GDColorstring.length >= 4){
+                                    GDColorMaxLength = 4;
+                                }
+                                else{
+                                    GDColorMaxLength = GDColorstring.length;
+                                }
+
+
+                                if(GDColorMaxLength == 1)
+                                {
+                                    //sHtml[sHtml.length] = '        <div class="btn product-item__color--img--nocursor" data-toggle="button"><img src="/_ui/responsive/theme-trplus/images/spu_empty.png"></div>';
+                                }
+                                else
+                                {
+                                    for (var m = 0, n = GDColorMaxLength; m < n; m++) {
+                                        
+                                        if(m == (GDColorMaxLength-1)){
+                                            sHtml[sHtml.length] = '        <div class="btn product-item__color--img d-none d-lg-inline-block" data-toggle="button"><a href="/p/' + GDColorstring[m].split(':')[1] + '"><img src="' + GDColorstring[m].split(':')[0] + '"></a></div>';
+                                        }
+                                        else{
+                                            sHtml[sHtml.length] = '        <div class="btn product-item__color--img"><a href="/p/' + GDColorstring[m].split(':')[1] + '"><img src="' + GDColorstring[m].split(':')[0] + '"></a></div>';
+                                        }
+                                    }
+
+                                    if (GDColorstring.length > 4) {
+                                        sHtml[sHtml.length] = '        <div class="product-item__color--more">+</div>';
+                                    }
+                                }
+
+                            }
+                            else{
+                                /**** 就是要加這一行 ****/
+                                //sHtml[sHtml.length] = '        <div class="btn product-item__color--img--nocursor" data-toggle="button"><img src="/_ui/responsive/theme-trplus/images/spu_empty.png"></div>';
+                            }
+
+
+                            //sHtml[sHtml.length] = '        <div class="btn product-item__color--img" data-toggle="button"><img src="//dummyimage.com/28x15/321/fff" /></div>';
+                            //sHtml[sHtml.length] = '        <div class="btn product-item__color--img" data-toggle="button"><img src="//dummyimage.com/28x15/395/fff" /></div>';
+                            //sHtml[sHtml.length] = '        <div class="btn product-item__color--img" data-toggle="button"><img src="//dummyimage.com/28x15/F23/fff" /></div>';
+                            //sHtml[sHtml.length] = '        <div class="btn product-item__color--img d-none d-lg-inline-block" data-toggle="button"><img src="//dummyimage.com/28x15/535/fff" /></div>';
+                            //sHtml[sHtml.length] = '        <div class="product-item__color--more">+2 more</div>';
+                            sHtml[sHtml.length] = '    </div>';
+                            sHtml[sHtml.length] = '    <a href="'+ clkurl +'" title="'+ title +'" class="product-item__name gtmImpressions_prod-URL"  isScupio="Y">';
+
+                            sHtml[sHtml.length] = '        <p style="text-indent:0px;">'+ title +'</p>';
+
+                            /*
+                            switch(GDChannel)
+                            {
+                                case 'TLW':
+                                    sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-i-house.svg"/>';
+                                    sHtml[sHtml.length] = '        <p>'+ title +'</p>';
+                                    break;
+                                case 'HOLA':
+                                    sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-hola.svg"/>';
+                                    sHtml[sHtml.length] = '        <p>'+ title +'</p>';
+                                    break;
+                                case 'TRPLUS':
+                                    sHtml[sHtml.length] = '        <img class="product-item__brand" src="/_ui/responsive/theme-trplus/images/logo/logo-testrite+.svg"/>';
+                                    sHtml[sHtml.length] = '        <p>'+ title +'</p>';
+                                    break;
+                                default:
+                                    sHtml[sHtml.length] = '        <p style="text-indent:0px;">'+ title +'</p>';
+                            }
+                            */
+                            
+                            sHtml[sHtml.length] = '    </a>';
+                            sHtml[sHtml.length] = '    <div class="product-item__rating">';
+
+                            var getGDAverageStar = parseInt(GDAvgscore);
+                            var getGDAverageEmptyStar = (5 - parseInt(GDAvgscore));
+
+                            for (var s = 0, t = getGDAverageStar; s < t; s++) {
+                                sHtml[sHtml.length] = '            <i class="fa fa-star fa-fw"></i>';
+                            }
+
+                            for (var s = 0, t = getGDAverageEmptyStar; s < t; s++) {
+                                sHtml[sHtml.length] = '            <i class="fa fa-star fa-fw empty"></i>';
+                            }
+
+                            sHtml[sHtml.length] = '        <span>(' + GDVotenumbers + ')</span>';
+
+                            //sHtml[sHtml.length] = '        <i class="fa fa-star fa-fw"></i>';
+                            //sHtml[sHtml.length] = '        <i class="fa fa-star fa-fw"></i>';
+                            //sHtml[sHtml.length] = '        <i class="fa fa-star fa-fw"></i>';
+                            //sHtml[sHtml.length] = '        <i class="fa fa-star fa-fw"></i>';
+                            //sHtml[sHtml.length] = '        <i class="fa fa-star fa-fw empty"></i>';
+                            //sHtml[sHtml.length] = '        <span>(888)</span>';
+                            sHtml[sHtml.length] = '    </div>';
+                            sHtml[sHtml.length] = '    <div class="product-item__price">';
+                            sHtml[sHtml.length] = '        <ins>$' + Sys_FormatNumber(price) + '</ins>';
+                            sHtml[sHtml.length] = '        <del>$' + Sys_FormatNumber(origprice) + '</del>';
+                            sHtml[sHtml.length] = '        <a class="pull-right hidden-md-down prod-item-doAddtoCart" href="#" title="加入購物車" GDID="' + GDID + '" GDPPRC="'+ price +'" GDPRC="'+ price +'" GDCPRC="'+ origprice+'">';
+                            sHtml[sHtml.length] = '            <i class="fa fa-shopping-cart" aria-hidden="true"></i>';
+                            sHtml[sHtml.length] = '        </a>';
+                            //sHtml[sHtml.length] = '        <a class="pull-right prod-item-doLike" href="#" title="收藏商品" GDID="' + GDID + '">';
+                            //sHtml[sHtml.length] = '            <i class="fa fa-heart" aria-hidden="true"></i>';
+                            //sHtml[sHtml.length] = '        </a>';
+                            sHtml[sHtml.length] = '    </div>';
+                            sHtml[sHtml.length] = '</div>';
+
+
+                            if(i==0)
+                            {
+                                gtmProdImpressionsStart = gtmProdImpressions.length;
+                            }
+                            if(i==(j-1))
+                            {
+                                gtmProdImpressionsEnd = gtmProdImpressions.length + 1;
+                            }
+                            gtmProdImpressions[gtmProdImpressions.length] = {
+                                price: price.toString(),
+                                id: GDID,
+                                name: title,
+                                brand: '',
+                                category: '',
+                                variant: '',
+                                position: '',
+                                list: gtmListNmame,
+                                url: 'https://www.trplus.com.tw/p/' + GDID,
+                                quantity: 1
+                            }
+
+
+                        };
+
+
+                        $('.more__products-scupioAlsoLike').html('').append(sHtml.join(''));
+
+
+                        var productMainOwl =  $('.product-main-owl__carousel.owl-carousel');
+                        productMainOwl.owlCarousel({
+                            loop: false,
+                            margin: 0,
+                            dots: false,
+                            nav:true,
+                            navText: ['<i class="fa fa-angle-left" aria-hidden="true"></i>', '<i class="fa fa-angle-right" aria-hidden="true"></i>'],
+                            responsiveClass:true,
+                            responsive : {
+                                // breakpoint from 0 up
+                                0:{
+                                    items:2,
+                                    slideBy: 2
+                                },
+                                1022:{
+                                    items:5,
+                                    slideBy: 5
+                                }
+                    
+                            }
+                        })
+                    
+                    
+                        $('.owl-item:nth-child(1) .product-item').addClass('product-item__left-border');
+                        productMainOwl.on('translated.owl.carousel', function(event) {
+                           $('.owl-item .product-item').removeClass('product-item__left-border');
+                           $('.owl-item:nth-child('+(event.item.index+1)+') .product-item').addClass('product-item__left-border');
+                        })
+
+                        
+                        dataLayer.push({
+                            'event': 'productImpressions',
+                            'ecommerce': {
+                                'currencyCode': 'TWD',
+                                'impressions': gtmProdImpressions.slice(gtmProdImpressionsStart, gtmProdImpressionsEnd)
+                            }
+                        });
+                }});
+
+            };
+
+            //處理 json_headerAdv
+            this.tlwAllAdv = function(Obj) {
+
+                var tlwAdvAry = ["tlw_logostr", "tlw_custMenu", "tlw_MainAdv", "tlw_ThreeTabLink", "tlw_mainCourse", "tlw_otherCourse", "tlw_hotEvent", "tlw_EventTitle", "tlw_SubAdv", "tlw_Scupio", "tlw_HotProdOpener", "tlw_HotProdTitle", "tlw_HotProd"];
+                var jsonObj = $.parseJSON(Obj);
+
+                for (var i = 0, j = tlwAdvAry.length; i < j; i++) {
+
+                    switch (tlwAdvAry[i]) {
+                        case ('tlw_MainAdv'):
+                        {
+                            if (jsonObj[tlwAdvAry[i]]) {
+                                //處理主要main adv輪播
+                                that.BuildHTML.mainAdv(jsonObj[tlwAdvAry[i]]);
+                            }
+                            break;
+                        };
+                        case ('tlw_ThreeTabLink'):
+                        {
+                            if (jsonObj[tlwAdvAry[i]]) {
+                                //處理Threet tab
+                                that.BuildHTML.threeTabLink(jsonObj[tlwAdvAry[i]]);
+                            }
+                            break;
+                        };
+                        case ('tlw_mainCourse'):
+                        {
+                            if (jsonObj[tlwAdvAry[i]]) {
+                                //處理主課程
+                                that.BuildHTML.mainCourse(jsonObj[tlwAdvAry[i]]);
+                            }
+                            break;
+                        };
+                        case ('tlw_otherCourse'):
+                        {
+                            if (jsonObj[tlwAdvAry[i]]) {
+                                //處理其他課程
+                                that.BuildHTML.otherCourse(jsonObj[tlwAdvAry[i]]);
+                            }
+                            break;
+                        };
+                        case ('tlw_hotEvent'):
+                        {
+                            if (jsonObj[tlwAdvAry[i]]) {
+                                //處理熱門活動
+                                that.BuildHTML.hotEvent(jsonObj[tlwAdvAry[i]]);
+                            }
+                            break;
+                        };
+                        case ('tlw_EventTitle'):
+                        {
+                            if (jsonObj[tlwAdvAry[i]]) {
+                                //處理限時強檔活動Title 文字
+                                that.BuildHTML.EventTitle(jsonObj[tlwAdvAry[i]]);
+                            }
+                            break;
+                        };
+                        case ('tlw_SubAdv'):
+                        {
+                            if (jsonObj[tlwAdvAry[i]]) {
+                                //處理主要sub adv輪播
+                                that.BuildHTML.SubAdv(jsonObj[tlwAdvAry[i]]);
+                            }
+                            break;
+                        };
+                        case ('tlw_Scupio'):
+                        {
+                            //直接走宇匯去取值
+                            that.Funs.ScupioAlsoLike();
+                            break;
+                        };
+                        case ('tlw_HotProdTitle'):
+                        {
+                            if (jsonObj[tlwAdvAry[i]]) {
+                                that.BuildHTML.HotProdTitle(jsonObj[tlwAdvAry[i]]);
+                            }
+
+                            break;
+                        };
+                        case ('tlw_HotProd'):
+                        {
+                            var getLocationParameter_HotOpen = $.getUrlQueryByName('HotOpen').toUpperCase();
+                            
+                            if (jsonObj[tlwAdvAry[i]]) {
+                                if ((jsonObj.tlw_HotProdOpener && jsonObj.tlw_HotProdOpener[0].Opener.toUpperCase() == 'Y') || getLocationParameter_HotOpen == 'Y') {
+                                    if (jsonObj[tlwAdvAry[i]].length > 0) {
+                                        //表示熱銷商品區塊 OP 有填資料
+                                        that.BuildHTML.HotProd(jsonObj[tlwAdvAry[i]]);
+                                    }
+                                } else {
+                                    //表示OP沒填資料則取系統熱銷排行
+                                    //that.BuildHTML.HotProd(hotsale__productsJSON);
+
+                                    if($('.hotsale__productsServer').attr('isEmpty') == 'false')
+                                    {
+
+                                        $('.hotsale__productsServer').show();
+                                        
+                                        var hotOwl =  $('.hotsale__productsServer .owl-carousel');
+                                        hotOwl.owlCarousel({
+                                            loop: false,
+                                            margin: 0,
+                                            dots: false,
+                                            nav:true,
+                                            navText: ['<i class="fa fa-angle-left" aria-hidden="true"></i>', '<i class="fa fa-angle-right" aria-hidden="true"></i>'],
+                                            responsiveClass:true,
+                                            responsive : {
+                                                // breakpoint from 0 up
+                                                0:{
+                                                    items:2,
+                                                    slideBy: 2
+                                                },
+                                                1022:{
+                                                    items:5,
+                                                    slideBy: 5
+                                                }
+                                    
+                                            }
+                                        })
+                                    
+                                    
+                                        $('.hotsale__productsServer .owl-item:nth-child(1) .product-item').addClass('product-item__left-border');
+                                        hotOwl.on('translated.owl.carousel', function(event) {
+                                            $('.hot .owl-item .product-item').removeClass('product-item__left-border');
+                                            $('.hot .owl-item:nth-child('+(event.item.index+1)+') .product-item').addClass('product-item__left-border');
+                                        })
+                                    }
+                                }
+                            }
+
+                            break;
+                        };
+                    };
+                }
+
+            };
+
+
+
+            this.init = function() {
+
+                //讀取TRPlus SON files {"tlw_logostr", "tlw_custMenu", "tlw_MainAdv", "tlw_ThreeTabLink", "tlw_mainCourse", "tlw_otherCourse", "tlw_hotEvent", "tlw_SubAdv", "tlw_HotProdOpener", "tlw_HotProdTitle", "tlw_HotProd"} 
+                if (that.Funs.checkHasData(json_tlwAdv)) {
+                    that.Funs.tlwAllAdv(json_tlwAdv);
+                }
+
+
+            };
+
+            this.initRegisterEvent = function() {
+                //$(window).on('resize', function() {
+                //    that.Funs.portfolioInit();
+                //    that.Funs.portfolioDescMargin();
+                //});
+            };
+        };
+    }
+
+    $(document).ready(function() {
+        var tlwHomeManager = new tlwHome();
+        tlwHomeManager.Funs.initRegisterEvent();
+        tlwHomeManager.Funs.init();
+    });
+
+})();

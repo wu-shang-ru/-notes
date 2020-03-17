@@ -1,0 +1,2879 @@
+﻿﻿var topGreenLenght = true;
+var siteID
+switch (getHeaderSiteID) {
+    case 'TRPlus':
+        siteID = 'TRPlus'
+        break
+    case 'crateandbarrel':
+        siteID = 'cb'
+        break 
+    case 'hoi': 
+        siteID = 'hoi'
+        break
+    case 'TLW': 
+        siteID = 'TLW'
+        break
+    case 'HOLA': 
+        siteID = 'Hola'
+        break
+}
+
+function htmlDecode(input){
+    var e = document.createElement('div');
+    e.innerHTML = input;
+    return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+}
+
+function _instanceof(left, right) { if (right != null && typeof Symbol !== "undefined" && right[Symbol.hasInstance]) { return right[Symbol.hasInstance](left); } else { return left instanceof right; } }
+                
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!_instanceof(instance, Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+(function () {
+    function headFooter() {
+
+        //define object
+        var that = this;
+        var _mgr = new function () { };
+
+        var isMobile = mobilecheck();
+        var testEmptyNumber = 1;
+
+        var smallCartLists = '';
+
+
+        $body = $('body');
+
+        /* Ajax */
+        _mgr.Ajax = new function () {
+
+
+            this.getTRPlusLCates = function (successFn) {
+
+                // 測試資料是否已經取過
+
+                var ref = {storeID: siteID};
+                
+
+                var storageContentJson = localStorage.getItem(siteID+'_jsonString');
+                if (storageContentJson !== null) {
+                    // 如果是已經有localStorage 的情形
+                    ref.storageHashCode = $.parseJSON(storageContentJson).resultHashCode
+                }
+                // console.log(ref)
+
+                $.ajax({
+                    url: '/category/menu',
+                    type: 'POST',
+                    data: ref,
+                    success: successFn
+                });
+            };
+
+
+            this.doAddtoCart = function (ref, successFn) {
+                //// console.log('doAddtoCart 被掉用了')
+                $.ajax({
+                    url: '/cart/add',
+                    type: 'POST',
+                    timeout: 100000,
+                    data: ref,
+                    success: successFn,
+                    error: function (jqXHR, textStatus, errorThrown) {
+
+                        alert('很抱歉！目前系統忙碌中，請稍候再試。');
+                        // console.log('jqXHR: ' + jqXHR);
+                        // console.log('textStatus: ' + textStatus);
+                        // console.log('errorThrown: ' + errorThrown);
+                    }
+                });
+
+            };
+
+            this.doRemoveItemFromCart = function (ref, successFn) {
+
+                $.ajax({
+                    url: '/cart/update',
+                    type: 'POST',
+                    timeout: 100000,
+                    data: ref,
+                    success: successFn,
+                    error: function (jqXHR, textStatus, errorThrown) {
+
+                        alert('很抱歉！目前系統忙碌中，請稍候再試。');
+                        // console.log('jqXHR: ' + jqXHR);
+                        // console.log('textStatus: ' + textStatus);
+                        // console.log('errorThrown: ' + errorThrown);
+                    }
+                });
+
+            };
+
+            this.getSmallCartLists = function (ref, successFn) {
+
+                $.ajax({
+                    url: '/cart/miniCartList',
+                    type: 'POST',
+                    timeout: 100000,
+                    data: ref,
+                    success: successFn,
+                    error: function (e) {
+
+                    }
+                });
+            };
+
+            this.getPoints = function (ref, successFn) {
+                $.ajax({
+                    url: '/my-account/getpoint',
+                    type: 'POST',
+                    timeout: 100000,
+                    data: ref,
+                    async: true,
+                    dataType: "html",
+                    success: successFn,
+                    error: function (e) {
+
+                    }
+                });
+            };
+
+        };
+
+        /* Ajax CallBack Display Content */
+        that.AjaxCallBack = new function () {
+            this.CB_getTRPlusDropMenu = function (ref, json) {
+                if (json) {
+
+                    isGetTRPlusDropMenuJSON = true;
+                    var localStorage = window.localStorage;
+                    var key = ref.storeID + ref.cateID;
+                    if (json == "localStorage") {
+                        json = localStorage.getItem(key);
+                        /* json = $.parseJSON(storageContentJson).LCategories;
+                         alert(json);*/
+                    } else {
+                        localStorage.setItem(key, json);
+                    }
+
+                    var dropMenuJSON = $.parseJSON(json);
+                    that.BuildHTML.TRPlusDropMenu(dropMenuJSON);
+                }
+            };
+
+            this.CB_getTRPlusLCates = function (json) {
+                if (json) {
+                    //處理 TRPlusLCates  TRPlus煮選單 (也從此資料建立篩選左欄 手機篩選右欄等資料)
+                    var cateJSON = $.parseJSON(json).storeCategory.subNodes;
+                    // console.log($.parseJSON(json).storeCategory)
+
+                    if (cateJSON) {
+                        if (cateJSON.length > 0) {
+                            that.BuildHTML.TRPlusLCates(cateJSON);
+                        } else {
+                            // console.log('/category/menu API subNodes 資料長度為 0')
+                        }
+                    } else {
+                        // console.log('/category/menu API 回傳資料不如預期 subNodes 找不到')
+                    }
+
+                }
+            };
+
+            this.CB_getTRPlusDropMenuForMobile = function (ref, json) {
+
+                if (json) {
+                    var cateJSON = $.parseJSON(json);
+
+                    var getEC_10001067JSON = [];
+
+                    //isTR: true
+
+                    switch (ref.storeID) {
+                        case 'TRPlus':
+
+                            if (ref.isTR) {
+                                // console.log('object : TR');
+
+
+                                for (var i = 0, j = cateJSON.storeCategory.LCategories.length; i < j; i++) {
+                                    if (cateJSON.storeCategory.LCategories[i].LCategory.CateID == 'EC_10001067') {
+                                        getEC_10001067JSON[getEC_10001067JSON.length] = cateJSON.storeCategory.LCategories[i];
+
+                                        //// console.log('getEC_10001067JSON :', getEC_10001067JSON);
+                                    }
+                                }
+                                setMobileTRMenuJSON = getEC_10001067JSON;
+                            }
+                            else {
+                                setMobileTrplusMenuJSON = cateJSON.storeCategory.LCategories;
+                            }
+
+                            break;
+                        case 'TLW':
+                            setMobileTLWMenuJSON = cateJSON.storeCategory.LCategories;
+                            break;
+                        case 'Hola':
+                            setMobileHolaMenuJSON = cateJSON.storeCategory.LCategories;
+                            break;
+                        case 'hoi':
+                            setMobileHoiMenuJSON = cateJSON.storeCategory.LCategories;
+                            break;
+                        case 'cb':
+                            setMobileCBMenuJSON = cateJSON.storeCategory.LCategories;
+                            break;
+                        case 'TR':
+
+                            // console.log('object :', TR);
+
+                            for (var i = 0, j = cateJSON.storeCategory.LCategories.length; i < j; i++) {
+                                if (cateJSON.storeCategory.LCategories[i].LCategory.CateID == 'EC_10001067') {
+                                    getEC_10001067JSON[getEC_10001067JSON.length] = cateJSON.storeCategory.LCategories[i];
+
+                                    //// console.log('getEC_10001067JSON :', getEC_10001067JSON);
+                                }
+                            }
+                            setMobileTRMenuJSON = getEC_10001067JSON;
+
+
+                            break;
+                        default:
+                            setMobileTrplusMenuJSON = cateJSON.storeCategory.LCategories;
+                            break;
+                    }
+
+                    //setMobileTrplusMenuJSON = cateJSON.storeCategory.LCategories;
+
+                    //// console.log('in CB_getTRPlusDropMenuForMobile function');
+                    //// console.log(JSON.stringify(cateJSON));
+
+                    if (cateJSON.storeCategory.LCategories.length > 0) {
+
+                        if (ref.isTR) {
+                            that.BuildHTML.TRPlusMobileMSCates(getEC_10001067JSON, 'true');
+                        }
+                        else {
+                            that.BuildHTML.TRPlusMobileMSCates(cateJSON.storeCategory.LCategories, 'false');
+                        }
+
+                    }
+                }
+            };
+
+
+            this.CB_doAddtoCart = function (ref, json) {
+                if (json) {
+                    rtnObj = $.parseJSON(json);
+                    rtnCode = parseInt(rtnObj.rtnCode);
+                    rtnMsg = rtnObj.rtnMsg;
+
+                    var parentObj = $('.addToCartinProcess').parent();
+
+                    if (rtnCode == 1) {
+                        //加入購物車成功之後，要call 小購物車ajax 取得小購物車商品列表以及小購物車商品數量
+                        that.Funs.callAjaxGetSmallCartLists();
+                        parentObj.find('img').remove();
+                            parentObj.find('i').addClass('fa-shopping-cart').removeClass('addToCartinProcess');
+
+                        var offset = parentObj.offset();
+                        $('#Add_to_bag_popup').removeClass('hidden').show().css(
+                            {top: offset.top - 75,
+                            left: offset.left + 12})
+                        
+                        parentObj.addClass('prodetail-item-goCartPage').removeClass('prodetail-item-doAddtoCart');
+
+
+
+                        setTimeout(function () {
+
+                            parentObj.find('i').addClass('fa-shopping-cart').removeClass('addToCartinProcess');
+                            $('#Add_to_bag_popup').addClass('hidden').hide()
+
+                            $('.prodetail-item-goCartPage').addClass('prodetail-item-doAddtoCart').removeClass('prodetail-item-goCartPage');
+
+                        }, 4000);
+
+
+                    }
+                    else {
+                        alert(rtnMsg);
+
+                        parentObj.find('img').remove();
+                        parentObj.find('i').addClass('fa-shopping-cart').removeClass('addToCartinProcess');
+                    }
+                }
+            };
+
+            this.CB_doRemoveItemFromCart = function (ref, json) {
+                if (json) {
+
+                    // console.log(json);
+
+                    rtnObj = $.parseJSON(json);
+                    rtnCode = parseInt(rtnObj.rtnCode);
+                    rtnMsg = rtnObj.rtnMsg;
+
+                    if (rtnCode == 1) {
+
+                        //加入購物車成功之後，要call 小購物車ajax 取得小購物車商品列表以及小購物車商品數量
+                        that.Funs.callAjaxGetSmallCartLists();
+
+                        // console.log('商品從小購物車移除 = 成功');
+
+                    }
+                }
+            };
+
+            this.CB_getSmallCartListss = function (ref, json) {
+                if (json) {
+
+
+                    //// console.log(json);
+
+                    rtnObj = $.parseJSON(json);
+
+                    smallCartLists = rtnObj;
+
+                    rtnCode = parseInt(rtnObj.rtnCode);
+                    rtnMsg = rtnObj.rtnMsg;
+                    rtnJson = rtnObj.rtnJson;
+
+
+                    if (rtnCode == 1) {
+                        //組合小購物車列表
+                        that.BuildHTML.smallCartList(rtnJson);
+                    }
+
+                }
+            };
+
+            this.CB_getPoints = function (ref, data) {
+                var point = data;
+                $('.popover__btn--points span').text(point);
+                $('.main-nav__account--login').addClass('hasGetPoints');
+            };
+
+
+        };
+
+        /* BuildUpHtmlString */
+        that.BuildHTML = new function () {
+
+
+            //處理TRPLus回來的中小分類，在側選單建立HTML
+            this.TRPlusMobileMSCates = function (Obj, isTR) {
+
+                //// console.log('in TRPlusMobileMSCates function----');
+                //// console.log('Obj = ' + JSON.stringify(Obj));
+
+                // console.log('jsonObj.length :', Obj.length);
+
+                var jsonObj = Obj;
+
+                if (isTR == 'true') {
+                    jsonObj = jsonObj[0].MCategories;
+                }
+
+                var sHtml = [];
+
+                for (var i = 0, j = jsonObj.length; i < j; i++) {
+
+
+                    var L_cateID;
+                    var L_CateUrl;
+                    var L_CateName;
+
+                    if (isTR == 'true') {
+                        L_cateID = jsonObj[i].MCategory.CateID;
+                        L_CateUrl = jsonObj[i].MCategory.CateUrl;
+                        L_CateName = jsonObj[i].MCategory.CateName;
+                    }
+                    else {
+                        L_cateID = jsonObj[i].LCategory.CateID;
+                        L_CateUrl = jsonObj[i].LCategory.CateUrl;
+                        L_CateName = jsonObj[i].LCategory.CateName;
+                    }
+
+
+                    sHtml[sHtml.length] = '<div class="slider-menu-subcate" LcateID="' + L_cateID + '">';
+
+                    sHtml[sHtml.length] = '    <dl class="category-item">';
+                    sHtml[sHtml.length] = '        <dt class="lv1">';
+                    sHtml[sHtml.length] = '            <a href="' + L_CateUrl + '" title="' + L_CateName + '" class="">';
+                    sHtml[sHtml.length] = '                <span>' + L_CateName + '</span>';
+                    sHtml[sHtml.length] = '                <i class="fa fa-angle-down"></i>';
+                    sHtml[sHtml.length] = '            </a>';
+                    sHtml[sHtml.length] = '        </dt>';
+
+                    sHtml[sHtml.length] = '        <dd class="lv2" McateID="' + L_cateID + '">';
+                    sHtml[sHtml.length] = '            <a href="' + L_CateUrl + '" title="' + L_CateName + '" class="">';
+                    sHtml[sHtml.length] = '                <span>全部 ' + L_CateName + '</span>';
+                    sHtml[sHtml.length] = '                <i class="fa fa-angle-right"></i>';
+                    sHtml[sHtml.length] = '            </a>';
+                    sHtml[sHtml.length] = '        </dd>';
+
+
+                    var getMCates = jsonObj[i].MCategories;
+
+                    if (isTR == 'true') {
+                        getMCates = jsonObj[i].SCategories;
+                    }
+
+
+                    for (var m = 0, n = getMCates.length; m < n; m++) {
+
+
+                        var MS_cateID;
+                        var MS_CateUrl;
+                        var MS_CateName;
+
+                        if (isTR == 'true') {
+                            MS_cateID = getMCates[m].SCategory.CateID;
+                            MS_CateUrl = getMCates[m].SCategory.CateUrl;
+                            MS_CateName = getMCates[m].SCategory.CateName;
+                        }
+                        else {
+                            MS_cateID = getMCates[m].MCategory.CateID;
+                            MS_CateUrl = getMCates[m].MCategory.CateUrl;
+                            MS_CateName = getMCates[m].MCategory.CateName;
+                        }
+
+
+                        sHtml[sHtml.length] = '        <dd class="lv2" McateID="' + MS_cateID + '">';
+                        sHtml[sHtml.length] = '            <a href="' + MS_CateUrl + '" title="' + MS_CateName + '" class="">';
+                        sHtml[sHtml.length] = '                <span>' + MS_CateName + '</span>';
+                        sHtml[sHtml.length] = '                <i class="fa fa-angle-down"></i>';
+                        sHtml[sHtml.length] = '            </a>';
+                        sHtml[sHtml.length] = '        </dd>';
+
+                        if (isTR != 'true') {
+                            var getSCates = jsonObj[i].MCategories[m].SCategories;
+
+                            for (var s = 0, t = getSCates.length; s < t; s++) {
+                                if (s == (t - 1)) {
+                                    sHtml[sHtml.length] = '        <dd class="lv3 last" McateID="' + getMCates[m].MCategory.CateID + '">';
+                                }
+                                else {
+                                    sHtml[sHtml.length] = '        <dd class="lv3" McateID="' + getMCates[m].MCategory.CateID + '">';
+                                }
+
+                                sHtml[sHtml.length] = '            <a href="' + getSCates[s].SCategory.CateUrl + '" title="' + getSCates[s].SCategory.CateName + '" class="">' + getSCates[s].SCategory.CateName + '</a>';
+                                sHtml[sHtml.length] = '        </dd>';
+                            }
+                        }
+                    }
+
+
+                    sHtml[sHtml.length] = '    </dl>';
+
+                    sHtml[sHtml.length] = '</div>';
+                }
+
+                $('.slider-menu-showSubHere').html('').append(sHtml.join(''));
+
+                $('.slider-menu-loading').hide();
+                //$('.owl-main-nav').show();
+                $('.slider-menu-showSubHere').show();
+            };
+
+            //處理 json_headerAdv.header_左上角
+            this.HeaderAdvTopLeftLink = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+                if (getHeaderSiteID === 'TRPlus') {
+                    // console.log('TR+通路')
+                    if (jsonObj.length > 0) {
+    
+                        for (var i = 0, j = jsonObj.length; i < j; i++) {
+                            var isTargetBlank = (jsonObj[i].LinkTarget == 'Y') ? ' target="_blank"' : '';
+    
+                            sHtml[sHtml.length] = [
+                                '<li><a class="text-white" href="{0}" title="{1}" {2}>{1}</a></li>'.format(jsonObj[i].Link, jsonObj[i].Text, isTargetBlank)
+                            ].join('');
+                        }
+    
+                        $('.top-nav__right').html('').append(sHtml.join(''));
+                    }
+                    
+                } else {
+                    // console.log('其他通路')
+                    //sHtml[sHtml.length] = '<a href="/" title="回首頁" class="top-nav__left-goBackHome"><i class="fa fa-home" aria-hidden="true" style="padding-right:3px;font-size: 17px;"></i>回首頁</a>';
+    
+                    if (jsonObj.length > 0) {
+    
+                        for (var i = 0, j = jsonObj.length; i < j; i++) {
+                            var isTargetBlank = (jsonObj[i].LinkTarget == 'Y') ? ' target="_blank"' : '';
+    
+                            sHtml[sHtml.length] = [
+                                '<li><a class="text-white" href="{0}" title="{1}" {2}>{1}</a></li>'.format(jsonObj[i].Link, jsonObj[i].Text, isTargetBlank)
+                            ].join('');
+                        }
+
+                        $('.top-nav__right').html('').append(sHtml.join(''));
+    
+                    }
+    
+                    if( !$('body').hasClass('device-lg') )
+                    {
+                        //sHtml[sHtml.length] = '<a href="/c/EC_10001067" style="margin-top:-2px;float:right;"><img src="/_ui/responsive/theme-trplus/images/logo/branding_tr_navi.jpg" height="25"></a>';
+                        sHtml[sHtml.length] = '<a href="/hoi" style="margin-top:-2px;margin-right:3px;float:right;"><img src="/_ui/responsive/theme-trplus/images/logo/branding_hoi.svg" height="25"></a>';
+                        sHtml[sHtml.length] = '<a href="/Hola" style="margin-top:-2px;margin-right:3px;float:right;"><img src="/_ui/responsive/theme-trplus/images/logo/branding_hola.svg" height="25"></a>';
+                        sHtml[sHtml.length] = '<a href="/TLW" style="margin-top:-2px;margin-right:3px;float:right;"><img src="/_ui/responsive/theme-trplus/images/logo/branding_TLW.svg" height="25"></a>';
+                    }
+    
+                    $('.top-nav__left').html('').append(sHtml.join(''));
+                }
+
+            };
+
+
+
+
+            //處理 json_headerAdv.header_LogoPlus 替換LOGO
+            this.HeaderAdvLogoPlus = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if (jsonObj.length > 0) {
+
+                    var isTargetBlank = (jsonObj[0].LinkTarget == 'Y') ? '_blank' : '';
+
+                    var whichImg = jsonObj[0].Image;
+
+                    if (isMobile && jsonObj[0].MobileImage != '') {
+                        whichImg = jsonObj[0].MobileImage;
+                    }
+
+
+
+                    var newlogo = new Image()
+                    newlogo.src = whichImg
+                    newlogo.onload = function () {
+                        var $nav__logo = $('a.main-nav__logo')
+                        $nav__logo.html('').append('<img src="' + whichImg + '" class="img-fluid" alt="' + jsonObj[0].Alt + '"/>');
+                        $nav__logo.attr('href', jsonObj[0].Link);
+                        $nav__logo.attr('title', jsonObj[0].Alt);
+
+                        if (isTargetBlank != '') {
+                            $nav__logo.attr('target', isTargetBlank);
+                        }
+                    }
+
+
+                }
+            };
+
+            //處理 json_headerAdv.header_SearchText 搜尋框內的文字替換
+            this.HeaderAdvSearchText = function (Obj) {
+                var jsonObj = Obj;
+
+                if (jsonObj.length > 0) {
+                    $('.main-nav__search input[name=search]').attr('placeholder', jsonObj[0].Text);
+                    $('.main-nav__search input[name=search]').attr('defaultValue', jsonObj[0].Text);
+                } else {
+                    $('.main-nav__search input[name=search]').attr('placeholder', '家的大小事，一輩子都是特力的事');
+                    $('.main-nav__search input[name=search]').attr('defaultValue', '家的大小事，一輩子都是特力的事');
+                }
+            };
+
+            //處理 json_footerGroup
+            this.FooterGroup = function (Obj) {
+
+                var footerGroupAry = ["footer_GroupLink_1", "footer_GroupLink_2", "footer_GroupLink_3", "footer_GroupLink_4", "footer_GroupLink_5", "footer_GroupLink_6"];
+                var jsonObj = $.parseJSON(Obj);
+
+                for (var i = 0, j = footerGroupAry.length; i < j; i++) {
+
+                    var sHtml = [];
+
+                    if (jsonObj[footerGroupAry[i]]) {
+
+                        for (var m = 0, n = jsonObj[footerGroupAry[i]].length; m < n; m++) {
+
+                            var isTargetBlank = (jsonObj[footerGroupAry[i]][m].LinkTarget == 'Y') ? ' target="_blank"' : '';
+
+                            sHtml[sHtml.length] = [
+                                '<li><a href="{0}" rel="nofollow" title="{1}" {2}>{1}</a></li>'.format(jsonObj[footerGroupAry[i]][m].Link, jsonObj[footerGroupAry[i]][m].Text, isTargetBlank)
+                            ].join('');
+                        }
+
+                        if ($('.site-map__' + footerGroupAry[i] + ' .site-map__alreadyItem').length) {
+
+                            $('.site-map__' + footerGroupAry[i] + ' .site-map__alreadyItem').before(sHtml.join(''));
+
+                        } else {
+                            $('.site-map__' + footerGroupAry[i]).html('').append(sHtml.join(''));
+                        }
+                    }
+                }
+            };
+
+            // ??
+            this.getMobileLcateImg = function (lcateJSON, cateName) {
+
+                var getMLcateImg = '';
+
+                for (var i = 0, j = lcateJSON.length; i < j; i++) {
+                    if (lcateJSON[i].H1Heading == cateName) {
+                        getMLcateImg = lcateJSON[i].H1Heading;
+                    }
+                }
+
+                if (getMLcateImg == '') {
+                    getMLcateImg = '/_ui/responsive/theme-trplus/images/LCateDefaultImg.png';
+                }
+
+                return getMLcateImg;
+
+            };
+
+
+
+            //處理 TRPlusLCates  TRPlus & 其他四個通路煮選單 + 手機漢堡右側選單
+            this.TRPlusLCates = function (LCatesJSON) {
+                // 爬樹 呈現分類頁左邊的選單
+                
+                // console.log('當前通路分類樹:')
+                // console.log(LCatesJSON) // 完整的分類樹`,隨著不同的通路也有不同
+                if (pageMainCssClasses === "CategoryPage" || pageMainCssClasses === "ProductListPage") {
+                    // 代表現正在分類列表頁，順帶把直塞入進去 但若在其他頁可省略產出這一個HTML
+
+                    var elseCategory = []; // B9 下面所需的資料
+                    
+                    var listis = []
+                    realCategoryTreeID.forEach(function (element) {
+                        listis.push(element.split('/c/')[1])
+                    })
+                    // 註: 依賴正確的 SEOCategoryTreeID 否則找不到相對應的資料
+                    // console.log('我在第幾層?')
+                    // console.log(listis.length-1)
+                    // console.log('我的ID是'+ listis[listis.length-1] )
+                    // console.log('我是不是最後一層? '+ isLastNode )
+                    var realID  = listis[listis.length-1] 
+                    var realOneself // 找到真正的自己的Obj
+                    realOneself = { subNodes: LCatesJSON }
+
+                    function findOneself(obj, listisI) {
+                        elseCategory = [] // 重新歸 0 避免上一層的殘留
+                        if (typeof obj === 'Array'){ // 避免亂傳一通
+                            obj.forEach(function (element) {
+                                // console.log('找到符合!!')
+                                if (element.CateID === listisI) {
+                                    realOneself = element
+                                } else {
+                                    elseCategory.push(element)
+                                }
+                            })
+                        } else { // == obj
+                            obj.subNodes.forEach(function (element) {
+                                if (element.CateID === listisI) {
+                                    // console.log('找到符合!!')
+                                    realOneself = element
+                                } else {
+                                    elseCategory.push(element)
+                                }
+                            })
+                        }
+                    }
+
+                    listis.shift() // 把第一個刪掉 因為那是通路資料裡找不到
+                    // 先找到真正的自己
+                    for (var i = 0; i < listis.length ; i++) { 
+                        // console.log('先找到真正的自己 進入迴圈')
+                        findOneself(realOneself, listis[i])
+                    }
+
+                    // console.log('真正的自己')
+                    // console.log(realOneself)
+                    var realOneselfForTopRifht;
+                    var num = 0 
+                    if (isLastNode){
+                        // console.log('我是最後一層')
+                        realOneself = { subNodes: LCatesJSON }
+                        for (var i = 0; i < listis.length-1 ; i++) { // realOneselfForTopRifht 往上返回一層
+                            findOneself(realOneself, listis[i])
+                        }
+                        realOneselfForTopRifht = realOneself
+
+                        num = -2
+                    } else {
+                        // console.log('我下面還有小分類 但是還有幾層我不知道')
+                        realOneselfForTopRifht = realOneself
+                        var sun, grand;
+                        // console.log(realOneself.subNodes)
+                        realOneself.subNodes.forEach(function(element){
+                                // console.log('找到兒子')
+                                sun = true
+                                var Sun_subNodes = element.subNodes
+                                Sun_subNodes.forEach(function(grandSund){
+                                    
+                                        // console.log('找到孫子')
+                                        grand = true
+                                })
+                            
+                            
+                        })
+                        if (sun && grand) { // 如果有子有孫
+                            // console.log('有子有孫')
+                            num = 0
+                        }
+                        if (sun && !grand){ // 如果有子無孫
+                            // console.log('有子無孫')
+                            num = -1
+                        }
+                        if (!sun && !grand){ // 如無子無孫
+                            // console.log('無子無孫')
+                            num = -2
+                        }
+
+                    }
+
+                    realOneself = { subNodes: LCatesJSON }
+                    // 再重新依照微調的位置 開始層級移動
+                    for (var i = 0; i < listis.length+num ; i++) { //num 表示微調位置 
+                        // console.log('進入微調迴圈')
+                        findOneself(realOneself, listis[i])
+                    }
+
+                    
+                    
+
+                    // console.log(listis)
+                    // console.log(listis.length)
+                    // console.log('realOneself')
+                    // console.log(realOneself)
+
+
+                    if (!realOneself) {
+                        // console.log('無法在/category/menu分類樹中找到本分類')
+                    } else {
+                        madeLeftCategory(realOneself, realID, realOneselfForTopRifht);
+                    }
+
+                }
+
+                // 手動塞入四個固定的分類資料:
+                var FixedClassification_TLW = [
+                    {
+                        CateID: "TLW",
+                        CateName: "特力屋",
+                        CateUrl: "/TLW",
+                        isLastNode: "N",
+                        subNodes: [],
+                        level: 1
+                    }
+                ];
+
+                var FixedClassification_Hola = [
+                    {
+                        CateID: "Hola",
+                        CateName: "HOLA",
+                        CateUrl: "/Hola",
+                        isLastNode: "N",
+                        subNodes: [],
+                        level: 1
+                    }
+                ];
+
+                var FixedClassification_hoi = [
+                    {
+                        CateID: "hoi",
+                        CateName: "hoi! 好好生活",
+                        CateUrl: "/hoi",
+                        isLastNode: "N",
+                        subNodes: [],
+                        level: 1
+                    }
+                ];
+
+                var FixedClassification_cb = [
+                    {
+                        CateID: "cb",
+                        CateName: "Crate&Barrel",
+                        CateUrl: "/crateandbarrel",
+                        isLastNode: "N",
+                        subNodes: [],
+                        level: 1
+                    }
+                ];
+
+
+                switch (getHeaderSiteID) {
+                    // 判斷不同商品組陣列
+                    case ('TRPlus'):
+                    {
+                        LCatesJSON = FixedClassification_TLW.concat(FixedClassification_Hola, FixedClassification_hoi, FixedClassification_cb, LCatesJSON);
+                        break;
+                    };
+                    case ('TLW'):
+                    {
+                        FixedClassification_TLW[0].subNodes = LCatesJSON
+                        LCatesJSON = FixedClassification_TLW;
+                        break;
+                    };
+                    case ('HOLA'):
+                    {
+                        FixedClassification_Hola[0].subNodes = LCatesJSON
+                        LCatesJSON = FixedClassification_Hola;
+                        break;
+                    };
+                    case ('hoi'):
+                    {
+                        FixedClassification_hoi[0].subNodes = LCatesJSON
+                        LCatesJSON = FixedClassification_hoi;
+                        break;
+                    };
+                    ;
+                    case ('crateandbarrel'):
+                    {
+                        FixedClassification_cb[0].subNodes = LCatesJSON
+                        LCatesJSON = FixedClassification_cb;
+                        break;
+                    };
+                };
+
+                var mobileBurger = [
+                    {
+                        CateID: "TRPlus",
+                        CateName: "特力家",
+                        CateUrl: "/",
+                        isLastNode: "N",
+                        subNodes: [],
+                        level: 1
+                    }                    
+                ].concat(FixedClassification_TLW,
+                    FixedClassification_Hola,
+                    FixedClassification_hoi,
+                    FixedClassification_cb)
+
+
+                mobileBurger.push({
+                        CateID: "TRPlus",
+                        CateName: "特力家品",
+                        CateUrl: "/TR_Brand/c/EC_10001067",
+                        isLastNode: "N",
+                        subNodes: [],
+                        level: 1
+                      })
+                mobileBurger = mobileBurger
+
+                // // console.log('Header NAV所需資料::')
+                // // console.log(LCatesJSON)
+
+
+                // // console.log('漢堡 NAV所需資料::')
+                // // console.log(mobileBurger)
+
+                //////////////////////////
+
+                var Menu =
+                /*#__PURE__*/
+                function (_React$Component) {
+                  _inherits(Menu, _React$Component);
+                
+                  function Menu() {
+                    var _this;
+                
+                    _classCallCheck(this, Menu);
+                
+                    _this = _possibleConstructorReturn(this, _getPrototypeOf(Menu).call(this));
+                    _this.state = {
+                      data: LCatesJSON
+                    };
+                    return _this;
+                  }
+                
+                  _createClass(Menu, [{
+                    key: "getMoreData",
+                    value: function getMoreData(index, CateID, level) {
+                      var _this2 = this;
+                
+                      if (getHeaderSiteID !== 'TRPlus') return; // 如果是TRPlus 才要去頁其他通路詳細分類樹，其他通路已經有傳入
+                
+                      var newLCatesJSON = this.state.data;
+                      if (level === 2) return;
+                
+                      if (newLCatesJSON[index].subNodes.length !== 0) {} else {
+                        var ref = {
+                          storeID: CateID,
+                          // 第一級館號`,如果為第二級統一使用  'TRPlus'
+                          cateID: '' // 分類號(現在沒用...)
+                          // storageHashCode: '' // 如果cookie裡面有的話可以傳過去檢查
+                
+                        };
+                        var storageContentJson = localStorage.getItem(CateID + '_jsonString');
+                
+                        if (storageContentJson !== null) {
+                          // 如果是已經有localStorage 的情形
+                          ref.storageHashCode = $.parseJSON(storageContentJson).resultHashCode;
+                        }
+                
+                        console.log(ref);
+                        $.ajax({
+                          url: '/category/menu',
+                          type: 'POST',
+                          data: ref,
+                          success: function success(newData) {
+                            if (newData === 'localStorage') {
+                              newData = localStorage.getItem(CateID + '_jsonString');
+                            } else {
+                              localStorage.setItem(CateID + '_jsonString', newData); // 儲存 分類樹
+                            }
+                
+                            newLCatesJSON[index].subNodes = $.parseJSON(newData).storeCategory.subNodes;
+                
+                            _this2.setState({
+                              data: newLCatesJSON
+                            });
+                          }
+                        });
+                      }
+                    }
+                  }, {
+                    key: "render",
+                    value: function render() {
+                      var _this3 = this;
+                
+                      var displayNone = {
+                        display: 'none'
+                      };
+                      var level2maxItemIndex, level3maxItemIndex;
+                      return React.createElement("div", {
+                        className: "container"
+                      }, React.createElement("ul", {
+                        className: "main-menu__list main-menu__list--level1"
+                      }, this.state.data.map(function (_ref, index) {
+                        var CateID = _ref.CateID,
+                            CateName = _ref.CateName,
+                            CateUrl = _ref.CateUrl,
+                            isLastNode = _ref.isLastNode,
+                            level = _ref.level,
+                            subNodes = _ref.subNodes,
+                            shownNavigationMenu = _ref.shownNavigationMenu;
+                        var TopNavliClass;
+                
+                        if (level == 1) {
+                          TopNavliClass = "main-menu__item--".concat(CateID, " main-menu__item main-menu__item--level1");
+                        } else {
+                          if (CateName === '特力家品') {
+                            TopNavliClass = 'main-menu__item--plushome main-menu__item--level1';
+                          } else {
+                            TopNavliClass = 'main-menu__item main-menu__item--level1';
+                          }
+                        }
+                
+                        return React.createElement("li", {
+                          className: TopNavliClass,
+                          key: CateID,
+                          style: shownNavigationMenu === 'false' ? displayNone : {}
+                        }, React.createElement("a", {
+                          className: "main-menu__link main-menu__link--level1",
+                          onMouseOver: _this3.getMoreData.bind(_this3, index, CateID, level),
+                          href: CateUrl,
+                          title: CateName
+                        }, CateName), isLastNode === 'N' && subNodes !== undefined && React.createElement("ul", {
+                          className: "main-menu__list main-menu__list--level2"
+                        }, function () {
+                          level2maxItemIndex = 8;
+                          var htmlTag = subNodes.map(function (_ref2, index) {
+                            var CateID = _ref2.CateID,
+                                CateName = _ref2.CateName,
+                                CateUrl = _ref2.CateUrl,
+                                isLastNode = _ref2.isLastNode,
+                                subNodes = _ref2.subNodes,
+                                shownNavigationMenu = _ref2.shownNavigationMenu;
+                            if (shownNavigationMenu === 'false') level2maxItemIndex += 1;
+                            return React.createElement("li", {
+                              className: "main-menu__item main-menu__item--level2",
+                              key: CateID,
+                              style: index >= level2maxItemIndex || shownNavigationMenu === 'false' ? displayNone : {}
+                            }, React.createElement("a", {
+                              class: "main-menu__link main-menu__link--level2",
+                              href: CateUrl,
+                              title: CateName
+                            }, CateName), isLastNode === 'N' && React.createElement("ul", {
+                              className: "main-menu__list main-menu__list--level3"
+                            }, function () {
+                              level3maxItemIndex = 15;
+                              var htmlTag_ = subNodes.map(function (_ref3, index) {
+                                var CateName = _ref3.CateName,
+                                    CateUrl = _ref3.CateUrl,
+                                    isLastNode = _ref3.isLastNode,
+                                    subNodes = _ref3.subNodes,
+                                    shownNavigationMenu = _ref3.shownNavigationMenu;
+                                if (shownNavigationMenu === 'false') level3maxItemIndex += 1;
+                                return React.createElement("li", {
+                                  className: "main-menu__item main-menu__item--level3",
+                                  style: index >= level3maxItemIndex || shownNavigationMenu === 'false' ? displayNone : {}
+                                }, React.createElement("a", {
+                                  className: "main-menu__link main-menu__link--level3",
+                                  href: CateUrl,
+                                  title: CateName
+                                }, CateName), isLastNode === 'N' && React.createElement("ul", {
+                                  className: "main-menu__list main-menu__list--level4"
+                                }, subNodes.map(function (_ref4) {
+                                  var CateName = _ref4.CateName,
+                                      CateUrl = _ref4.CateUrl,
+                                      shownNavigationMenu = _ref4.shownNavigationMenu;
+                                  return React.createElement("li", {
+                                    className: "main-menu__item main-menu__item--level4",
+                                    style: shownNavigationMenu === 'false' ? displayNone : {}
+                                  }, React.createElement("a", {
+                                    className: "main-menu__link main-menu__link--level4",
+                                    href: CateUrl,
+                                    title: CateName
+                                  }, CateName));
+                                })));
+                              });
+                              return htmlTag_;
+                            }()));
+                          });
+                          return htmlTag;
+                        }()));
+                      })));
+                    }
+                  }]);
+                
+                  return Menu;
+                }(React.Component);
+
+                ReactDOM.render(React.createElement(Menu, null), document.getElementById('desktopMenu')); //headerFooter.js
+                //////////////////////////
+
+                ///組合 mobileLeftCategory////
+
+                var Menuleftmobile =
+                /*#__PURE__*/
+                function (_React$Component) {
+                  _inherits(Menuleftmobile, _React$Component);
+                
+                  function Menuleftmobile() {
+                    var _this;
+                
+                    _classCallCheck(this, Menuleftmobile);
+                
+                    _this = _possibleConstructorReturn(this, _getPrototypeOf(Menuleftmobile).call(this));
+                    _this.state = {
+                      data: mobileBurger
+                    };
+                    return _this;
+                  }
+                
+                  _createClass(Menuleftmobile, [{
+                    key: "getMoreData",
+                    value: function getMoreData(index, CateID, Element) {
+                      var _this2 = this;
+                
+                      // 由於這邊五大通路有的有下層有 的沒有所已故定都去與 API 溝通再說
+                      var $thisElement = $(Element.target);
+                      var newmobileBurger = this.state.data;
+                      // console.log($thisElement); // 裡面有資料了勿再要
+                
+                      if (newmobileBurger[index].subNodes.length === 0) {
+                        var ref = {
+                          storeID: CateID,
+                          // 第一級館號`,如果為第二級統一使用  'TRPlus'
+                          cateID: '' // 分類號(現在沒用...)
+                          // storageHashCode: '' // 如果cookie裡面有的話可以傳過去檢查
+                
+                        };
+                        var storageContentJson = localStorage.getItem(CateID + '_jsonString');
+                
+                        if (storageContentJson !== null) {
+                          // 如果是已經有localStorage 的情形
+                          ref.storageHashCode = $.parseJSON(storageContentJson).resultHashCode;
+                        }
+                
+                        // console.log(ref);
+                        $.ajax({
+                          url: '/category/menu',
+                          type: 'POST',
+                          data: ref,
+                          success: function success(newData) {
+                            if (newData === 'localStorage') {
+                              newData = localStorage.getItem(CateID + '_jsonString');
+                            } else {
+                              localStorage.setItem(CateID + '_jsonString', newData); // 儲存 分類樹
+                            }
+                
+                            if (index === 0 || index === 5) {
+                              // 第五個是 特力家品 幫她存一下
+                              newmobileBurger[0].subNodes = $.parseJSON(newData).storeCategory.subNodes;
+                              newmobileBurger[5].subNodes = $.parseJSON(newData).storeCategory.subNodes[0].subNodes;
+                            } else {
+                              newmobileBurger[index].subNodes = $.parseJSON(newData).storeCategory.subNodes;
+                            }
+                
+                            _this2.setState({
+                              data: newmobileBurger
+                            });
+                
+                            // console.log(newmobileBurger);
+                            $thisElement.next('ul').slideToggle();
+                          }
+                        });
+                      } else {
+                        $thisElement.next('ul').slideToggle();
+                      }
+                    }
+                  }, {
+                    key: "openAndClose",
+                    value: function openAndClose(Element) {
+                      var $thisElement = $(Element.target);
+                      $thisElement.next('ul').slideToggle();
+                    }
+                  }, {
+                    key: "render",
+                    value: function render() {
+                      var _this3 = this;
+                
+                      var displayNone = {
+                        display: 'none'
+                      };
+                      return React.createElement(React.Fragment, null, this.state.data.map(function (_ref, index) {
+                        var shownNavigationMenu = _ref.shownNavigationMenu,
+                            CateID = _ref.CateID,
+                            CateName = _ref.CateName,
+                            CateUrl = _ref.CateUrl,
+                            level = _ref.level,
+                            subNodes = _ref.subNodes;
+                        return React.createElement("li", {
+                          style: shownNavigationMenu === 'false' ? displayNone : {},
+                          className: "with-angle-down"
+                        }, React.createElement("a", {
+                          href: CateUrl
+                        }, index === 0 ? '全部' : CateName, " \u5546\u54C1\u5206\u985E"), React.createElement("div", {
+                          className: "hiddenbtn",
+                          onClick: _this3.getMoreData.bind(_this3, index, CateID),
+                          href: CateUrl,
+                          title: CateName
+                        }), React.createElement("ul", {
+                          className: "item accordion",
+                          style: displayNone
+                        }, subNodes.map(function (_ref2, index) {
+                          var shownNavigationMenu = _ref2.shownNavigationMenu,
+                              CateID = _ref2.CateID,
+                              CateName = _ref2.CateName,
+                              CateUrl = _ref2.CateUrl,
+                              isLastNode = _ref2.isLastNode,
+                              level = _ref2.level,
+                              subNodes = _ref2.subNodes;
+                          return React.createElement("li", {
+                            className: subNodes.length ? 'wrap level-2 with-angle-down' : 'wrap level-2',
+                            key: CateID,
+                            style: CateName === '特力家品' || shownNavigationMenu === 'false' ? displayNone : {}
+                          }, React.createElement("a", {
+                            href: CateUrl,
+                            title: CateName
+                          }, CateName), React.createElement("div", {
+                            className: "hiddenbtn",
+                            onClick: _this3.openAndClose.bind(_this3)
+                          }), isLastNode === 'N' && subNodes !== undefined && React.createElement("ul", {
+                            className: "item accordion",
+                            style: displayNone
+                          }, subNodes.map(function (_ref3) {
+                            var shownNavigationMenu = _ref3.shownNavigationMenu,
+                                CateID = _ref3.CateID,
+                                CateName = _ref3.CateName,
+                                CateUrl = _ref3.CateUrl,
+                                isLastNode = _ref3.isLastNode,
+                                subNodes = _ref3.subNodes;
+                            return React.createElement("li", {
+                              style: shownNavigationMenu === 'false' ? displayNone : {},
+                              className: subNodes.length ? 'wrap level-3 with-angle-down' : 'wrap level-3',
+                              key: CateID
+                            }, React.createElement("a", {
+                              class: "main-menu__link main-menu__link--level3",
+                              href: CateUrl,
+                              title: CateName
+                            }, CateName), React.createElement("div", {
+                              className: "hiddenbtn",
+                              onClick: _this3.openAndClose.bind(_this3)
+                            }), isLastNode === 'N' && React.createElement("ul", {
+                              className: "item accordion",
+                              style: displayNone
+                            }, subNodes.map(function (_ref4) {
+                              var shownNavigationMenu = _ref4.shownNavigationMenu,
+                                  CateName = _ref4.CateName,
+                                  CateUrl = _ref4.CateUrl,
+                                  isLastNode = _ref4.isLastNode,
+                                  subNodes = _ref4.subNodes;
+                              return React.createElement("li", {
+                                style: shownNavigationMenu === 'false' ? displayNone : {},
+                                className: subNodes.length ? 'wrap level-4 with-angle-down' : 'wrap level-4',
+                                key: CateID
+                              }, React.createElement("a", {
+                                href: CateUrl,
+                                title: CateName
+                              }, CateName), React.createElement("div", {
+                                className: "hiddenbtn",
+                                onClick: _this3.openAndClose.bind(_this3)
+                              }), isLastNode === 'N' && React.createElement("ul", {
+                                className: "item accordion",
+                                style: displayNone
+                              }, subNodes.map(function (_ref5) {
+                                var shownNavigationMenu = _ref5.shownNavigationMenu,
+                                    CateName = _ref5.CateName,
+                                    CateUrl = _ref5.CateUrl,
+                                    isLastNode = _ref5.isLastNode,
+                                    subNodes = _ref5.subNodes;
+                                return React.createElement("li", {
+                                  style: shownNavigationMenu === 'false' ? displayNone : {},
+                                  className: "wrap level-5",
+                                  key: CateID
+                                }, React.createElement("a", {
+                                  href: CateUrl,
+                                  title: CateName
+                                }, CateName));
+                              })));
+                            })));
+                          })));
+                        })));
+                      }));
+                    }
+                  }]);
+                
+                  return Menuleftmobile;
+                }(React.Component);
+
+                
+                ReactDOM.render(React.createElement(Menuleftmobile, null), document.getElementById('mobileLeftCategory')); //headerFooter.js
+                ///////
+
+            };
+
+            //處理 json_headerAdv.header_MemberMenu 特殊選單加在點束查詢後面
+            this.HeaderMemberMenu = function (Obj) {
+                var jsonObj = Obj;
+
+                var sHtml = [];
+                for (var i = 0, j = jsonObj.length; i < j; i++) {
+
+                    var isTargetBlank = (jsonObj[i].LinkTarget == 'Y') ? ' target="_blank"' : '';
+
+                    sHtml[sHtml.length] = [
+                        '<a href="{1}" class="popover__btn" {2}>{0}</a>'.format(jsonObj[i].Text, jsonObj[i].Link, isTargetBlank)
+                    ].join('');
+                }
+
+                $('.main-nav__accountMore').after(sHtml.join(''));
+            };
+
+            this.smallCartList_TabProds = function (Obj, cartType) {
+
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                for (var i = 0, j = jsonObj.length; i < j; i++) {
+
+
+                    sHtml[sHtml.length] = '        <li class="shopping__item">';
+                    sHtml[sHtml.length] = '            <div class="shopping__photo">';
+                    sHtml[sHtml.length] = '                <a href="/p/' + jsonObj[i].GDID + '"><img src="' + jsonObj[i].GDMainImg + '" class="img-fluid" /></a>';
+                    sHtml[sHtml.length] = '            </div>';
+                    sHtml[sHtml.length] = '            <div class="shopping__title">' + jsonObj[i].GDNM + '</div>';
+                    sHtml[sHtml.length] = '            <div class="shopping__amount">數量: ' + jsonObj[i].GDQty + '</div>';
+
+
+                    var showPRC = '';
+
+                    if (jsonObj[i].GDPPRC != '') {
+
+                        if (jsonObj[i].GDPPRC != jsonObj[i].GDPRC) {
+                            sHtml[sHtml.length] = '            <div class="shopping__price">優惠價: $' + Sys_FormatNumber(jsonObj[i].GDPPRC) + '<span class="shopping__sale">小計: $' + Sys_FormatNumber(parseInt(jsonObj[i].GDPPRC) * jsonObj[i].GDQty) + '</span></div>';
+                            showPRC = jsonObj[i].GDPPRC;
+                        }
+                        else {
+                            sHtml[sHtml.length] = '            <div class="shopping__price">網購價: $' + Sys_FormatNumber(jsonObj[i].GDPRC) + '<span class="shopping__sale">小計: $' + Sys_FormatNumber(parseInt(jsonObj[i].GDPRC) * jsonObj[i].GDQty) + '</span></div>';
+                            showPRC = jsonObj[i].GDPRC;
+                        }
+
+
+                    } else {
+                        sHtml[sHtml.length] = '            <div class="shopping__price">網購價: $' + Sys_FormatNumber(jsonObj[i].GDPRC) + '<span class="shopping__sale">小計: $' + Sys_FormatNumber(parseInt(jsonObj[i].GDPRC) * jsonObj[i].GDQty) + '</span></div>';
+                        showPRC = jsonObj[i].GDPRC;
+                    }
+
+                    sHtml[sHtml.length] = '            <a href="#" class="shopping__close prod-item-doRemoveFromCart" title="移除商品" GDID="' + jsonObj[i].GDID + '" GDEN="' + jsonObj[i].GDEN + '" GDQTY="' + jsonObj[i].GDQty + '" GDPRC="' + showPRC + '" cartType="' + cartType + '"><i class="fa fa-times"></i></a>';
+                    sHtml[sHtml.length] = '        </li>';
+                }
+
+                return sHtml.join('');
+            };
+
+            //顯示小購物車商品列表
+            this.smallCartList = function (Obj) {
+                var jsonObj = Obj;
+
+                $('.main-nav__no').text(jsonObj.Count);
+
+                var showDeliveryPickupCart = true;
+
+                if (jsonObj.deliveryPickupCart.length < 1) {
+                    showDeliveryPickupCart = false;
+                }
+                if ($('.main-nav__cart-show').attr('shoppingTab') == 'preOrderCart') {
+                    showDeliveryPickupCart = false;
+                }
+
+                var sHtml = [];
+                sHtml[sHtml.length] = '<div class="popover popover--cart">';
+                sHtml[sHtml.length] = '<div class="popover__header row">';
+                sHtml[sHtml.length] = '    <div class="col text-left">總件數 : ' + jsonObj.Count + '</div>';
+
+                if (jsonObj.deliveryPickupCart.length > 0) {
+                    sHtml[sHtml.length] = '    <a href="/cart?type=InStock&useBonus=Y" class="col text-right minicart--checkout" title="前往購物車">前往購物車 <i class="fa fa-angle-right" aria-hidden="true"></i></a>';
+                }
+                else {
+                    sHtml[sHtml.length] = '    <a href="/cart?type=PreOrder&useBonus=Y" class="col text-right minicart--checkout" title="前往購物車">前往購物車 <i class="fa fa-angle-right" aria-hidden="true"></i></a>';
+                }
+
+
+                sHtml[sHtml.length] = '</div>';
+                sHtml[sHtml.length] = '<hr class="popover__line">';
+
+
+                if (jsonObj.deliveryPickupCart.length > 0 || jsonObj.preOrderCart.length > 0) {
+                    sHtml[sHtml.length] = '<ul class="nav nav-tabs shopping-tabs">';
+                    if (jsonObj.deliveryPickupCart.length > 0) {
+                        if (showDeliveryPickupCart) {
+                            sHtml[sHtml.length] = '    <li class="active"><a href="javascript:;" shoppingTab="deliveryPickupCart">現貨訂購(' + jsonObj.deliveryPickupCart.length + ')</a></li>';
+                        }
+                        else {
+                            sHtml[sHtml.length] = '    <li><a href="javascript:;" shoppingTab="deliveryPickupCart">現貨訂購(' + jsonObj.deliveryPickupCart.length + ')</a></li>';
+                        }
+                    }
+
+                    if (jsonObj.preOrderCart.length > 0) {
+                        if (jsonObj.deliveryPickupCart.length > 0 && showDeliveryPickupCart) {
+                            sHtml[sHtml.length] = '    <li><a href="javascript:;" shoppingTab="preOrderCart">預購付款(' + jsonObj.preOrderCart.length + ')</a></li>';
+                        }
+                        else {
+                            sHtml[sHtml.length] = '    <li class="active"><a href="javascript:;" shoppingTab="preOrderCart">預購付款(' + jsonObj.preOrderCart.length + ')</a></li>';
+                        }
+
+                    }
+                    sHtml[sHtml.length] = '</ul>';
+                }
+
+                sHtml[sHtml.length] = '<div class="popover__body" data-simplebar>';
+
+
+                if (jsonObj.deliveryPickupCart.length > 0) {
+                    if (showDeliveryPickupCart) {
+                        sHtml[sHtml.length] = '    <ul class="shopping deliveryPickupCart">';
+                    }
+                    else {
+                        sHtml[sHtml.length] = '    <ul class="shopping deliveryPickupCart" style="display: none;">';
+                    }
+
+                    sHtml[sHtml.length] = that.BuildHTML.smallCartList_TabProds(jsonObj.deliveryPickupCart, 'InStock');
+                    sHtml[sHtml.length] = '    </ul>';
+                }
+
+                if (jsonObj.preOrderCart.length > 0) {
+                    if (jsonObj.deliveryPickupCart.length > 0 && showDeliveryPickupCart) {
+                        sHtml[sHtml.length] = '    <ul class="shopping preOrderCart">';
+                    }
+                    else {
+                        sHtml[sHtml.length] = '    <ul class="shopping preOrderCart" style="display: block;">';
+                    }
+                    sHtml[sHtml.length] = that.BuildHTML.smallCartList_TabProds(jsonObj.preOrderCart, 'PreOrder');
+                    sHtml[sHtml.length] = '    </ul>';
+                }
+
+                sHtml[sHtml.length] = '</div>';
+                sHtml[sHtml.length] = '<div class="popover__footer">';
+                sHtml[sHtml.length] = '    <a href="/cart?type=InStock&useBonus=Y" class="popover__btn popover__btn--checkout minicart--checkout" title="前往購物車"><i class="fa fa-shopping-cart" aria-hidden="true"></i> 立即結帳</a>';
+                sHtml[sHtml.length] = '</div>';
+                sHtml[sHtml.length] = '</div>';
+
+                $('.popover.popover--cart').remove();
+                $('.main-nav__cart-lists .main-nav__cart-show').after(sHtml.join(''));
+
+
+                if (!showDeliveryPickupCart) {
+                    $('.shopping-tabs a').each(function () {
+                        if ($(this).attr('shoppingTab') == 'preOrderCart') {
+                            $(this).trigger('click');
+                        }
+                    });
+                }
+
+            };
+
+            //處理 TLW Logo旁邊的slogan字串
+            this.TLWLogoStr = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if (jsonObj.length > 0) {
+
+                    //// console.log(jsonObj[0].Layout)
+
+                    //if(jsonObj[0].Layout.indexOf('img') != -1 || jsonObj[0].Layout == '')
+                    if (jsonObj[0].Layout.indexOf('img') != -1 || jsonObj[0].Layout == '') {
+
+                        if ($('body').hasClass('device-lg') || $('body').hasClass('device-md')) {
+                            //$('.main-nav__subtitle').css('margin', '20px auto');
+                        }
+                        else {
+                            //$('.main-nav__subtitle').css('margin', 'auto');
+                        }
+
+
+                        var isTargetBlank = (jsonObj[0].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                        $('.main-nav__subtitle').html('').html('<a href="' + jsonObj[0].Link + '" ' + isTargetBlank + '><img src="' + jsonObj[0].Image + '"></a>');
+                    }
+                    else {
+                        $('.main-nav__subtitle').html('').text(jsonObj[0].Text);
+                    }
+                }
+            };
+
+            //處理 TLW 商品分類旁的B2E 廣告menu
+            this.TLWCustMenu = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                for (var i = 0, j = jsonObj.length; i < j; i++) {
+                    var isTargetBlank = (jsonObj[i].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                    sHtml[sHtml.length] = '<li><a href="' + jsonObj[i].Link + '" ' + isTargetBlank + '><p>' + jsonObj[i].Text + '</p></a></li>';
+                }
+
+                $('.menu_tlw-cautcates').append(sHtml.join(''));
+            };
+
+            //處理 Hola Logo旁邊的slogan字串
+            this.HolaLogoStr = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if (jsonObj.length > 0) {
+
+                    if (jsonObj[0].Layout.indexOf('img') != -1 || jsonObj[0].Layout == '') {
+
+                        if ($('body').hasClass('device-lg') || $('body').hasClass('device-md')) {
+                            $('.main-nav__subtitle').css('margin', '20px auto');
+                        }
+                        else {
+                            $('.main-nav__subtitle').css('margin', 'auto');
+                        }
+
+
+                        var isTargetBlank = (jsonObj[0].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                        $('.main-nav__subtitle').html('').html('<a href="' + jsonObj[0].Link + '" ' + isTargetBlank + '><img src="' + jsonObj[0].Image + '"></a>');
+                    }
+                    else {
+                        $('.main-nav__subtitle').html('').text(jsonObj[0].Text);
+                    }
+                }
+            };
+
+            //處理 Hola 商品分類旁的B2E 廣告menu
+            this.HolaCustMenu = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                for (var i = 0, j = jsonObj.length; i < j; i++) {
+
+                    var isTargetBlank = (jsonObj[i].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+
+                    sHtml[sHtml.length] = '<li><a href="' + jsonObj[i].Link + '" ' + isTargetBlank + '><p>' + jsonObj[i].Text + '</p></a></li>';
+                }
+
+                $('.menu_hola-cautcates').append(sHtml.join(''));
+            };
+
+
+
+
+            //處理 Hoi Logo旁邊的slogan字串
+            this.hoiLogoStr = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if (jsonObj.length > 0) {
+
+                    if (jsonObj[0].Layout.indexOf('img') != -1 || jsonObj[0].Layout == '') {
+
+                        if ($('body').hasClass('device-lg') || $('body').hasClass('device-md')) {
+                            $('.main-nav__subtitle').css('margin', '20px auto');
+                        }
+                        else {
+                            $('.main-nav__subtitle').css('margin', 'auto');
+                        }
+
+
+                        var isTargetBlank = (jsonObj[0].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                        $('.main-nav__subtitle').html('').html('<a href="' + jsonObj[0].Link + '" ' + isTargetBlank + '><img src="' + jsonObj[0].Image + '"></a>');
+                    }
+                    else {
+                        $('.main-nav__subtitle').html('').text(jsonObj[0].Text);
+                    }
+                }
+            };
+
+            //處理 Hoi 商品分類旁的B2E 廣告menu
+            this.hoiCustMenu = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                for (var i = 0, j = jsonObj.length; i < j; i++) {
+
+                    var isTargetBlank = (jsonObj[i].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+
+                    sHtml[sHtml.length] = '<li><a href="' + jsonObj[i].Link + '" ' + isTargetBlank + '><p>' + jsonObj[i].Text + '</p></a></li>';
+                }
+
+                $('.menu_hoi-cautcates').append(sHtml.join(''));
+            };
+
+
+            //處理 CB Logo旁邊的slogan字串
+            this.cbLogoStr = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if (jsonObj.length > 0) {
+
+                    if (jsonObj[0].Layout.indexOf('img') != -1 || jsonObj[0].Layout == '') {
+
+                        if ($('body').hasClass('device-lg') || $('body').hasClass('device-md')) {
+                            $('.main-nav__subtitle').css('margin', '20px auto');
+                        }
+                        else {
+                            $('.main-nav__subtitle').css('margin', 'auto');
+                        }
+
+
+                        var isTargetBlank = (jsonObj[0].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                        $('.main-nav__subtitle').html('').html('<a href="' + jsonObj[0].Link + '" ' + isTargetBlank + '><img src="' + jsonObj[0].Image + '"></a>');
+                    }
+                    else {
+                        $('.main-nav__subtitle').html('').text(jsonObj[0].Text);
+                    }
+                }
+            };
+
+            //處理 CB 商品分類旁的B2E 廣告menu
+            this.cbCustMenu = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                for (var i = 0, j = jsonObj.length; i < j; i++) {
+
+                    var isTargetBlank = (jsonObj[i].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+
+                    sHtml[sHtml.length] = '<li><a href="' + jsonObj[i].Link + '" ' + isTargetBlank + '><p>' + jsonObj[i].Text + '</p></a></li>';
+                }
+
+                $('.menu_cb-cautcates').append(sHtml.join(''));
+            };
+
+
+
+
+            this.handleShareTLWHolaDropMenu_MSCates = function (JSONData) {
+
+                var JSONObj = JSONData;
+                var sHtml = [];
+
+                if (JSONObj.length > 0) {
+
+                    sHtml[sHtml.length] = '<ul class="menu__md">';
+
+                    for (var i = 0, j = JSONObj.length; i < j; i++) {
+
+
+                        //判斷促銷分類，要末端才能點擊
+                        var getMCateUrl = that.Funs.checkCategoryLink(JSONObj[i].MCategory.isMainChannelCategory, JSONObj[i].MCategory.isLastNode, JSONObj[i].MCategory.CateUrl);
+
+                        sHtml[sHtml.length] = '<li style="' + getMCateUrl.setCateStyle + '">';
+
+                        sHtml[sHtml.length] = '    <a href="' + getMCateUrl.setCateUrl + '" title="' + JSONObj[i].MCategory.CateName + '" cateID="' + JSONObj[i].MCategory.CateID + '" style="' + getMCateUrl.setCateStyle + '">' + JSONObj[i].MCategory.CateName + '</a>';
+
+                        if (JSONObj[i].SCategories.length > 0) {
+                            sHtml[sHtml.length] = '    <ul class="menu__sm">';
+
+                            for (var m = 0, n = JSONObj[i].SCategories.length; m < n; m++) {
+
+                                //// console.log(JSONObj[i].SCategories[m].SCategory.CateID)
+                                //判斷促銷分類，要末端才能點擊
+                                var getSCateUrl = that.Funs.checkCategoryLink(JSONObj[i].SCategories[m].SCategory.isMainChannelCategory, JSONObj[i].SCategories[m].SCategory.isLastNode, JSONObj[i].SCategories[m].SCategory.CateUrl);
+                                sHtml[sHtml.length] = '        <li><a href="' + getSCateUrl.setCateUrl + '" cateID="' + JSONObj[i].SCategories[m].SCategory.CateID + '" style="' + getSCateUrl.setCateStyle + '">' + JSONObj[i].SCategories[m].SCategory.CateName + '</a></li>';
+                            }
+
+                            sHtml[sHtml.length] = '    </ul>';
+                        }
+
+                        sHtml[sHtml.length] = '</li>';
+                    }
+
+                    sHtml[sHtml.length] = '</ul>';
+                }
+
+                return sHtml.join('');
+            };
+
+            this.handleShareTLWHolaDropMenu_LCatesAD = function (JSONData) {
+                var JSONObj = JSONData;
+                var sHtml = [];
+
+
+                sHtml[sHtml.length] = '<div class="menu__ad" style="margin-top:0px;">';
+                if (JSONObj.CateAdvImg.length > 0) {
+
+                    var whichImg = JSONObj.CateAdvImg[0].Image;
+
+                    if (isMobile && JSONObj.CateAdvImg[0].MobileImage != '') {
+                        whichImg = JSONObj.CateAdvImg[0].MobileImage;
+                    }
+
+                    sHtml[sHtml.length] = '    <a href="' + JSONObj.CateAdvImg[0].Link + '" class="menu__event event" title="' + JSONObj.CateAdvImg[0].H1Heading + '">';
+                    sHtml[sHtml.length] = '        <div class="event__photo">';
+                    sHtml[sHtml.length] = '            <img src="' + whichImg + '" alt="' + JSONObj.CateAdvImg[0].H1Heading + '"/>';
+                    sHtml[sHtml.length] = '        </div>';
+                    sHtml[sHtml.length] = '        <div class="event__info">';
+                    sHtml[sHtml.length] = '            <div class="event__title">' + JSONObj.CateAdvImg[0].H1Heading + '</div>';
+                    sHtml[sHtml.length] = '            <div class="event__date">' + JSONObj.CateAdvImg[0].H2Heading + '</div>';
+                    sHtml[sHtml.length] = '        </div>';
+                    sHtml[sHtml.length] = '    </a>';
+                }
+
+                if (JSONObj.CateAdvText.length > 0) {
+                    sHtml[sHtml.length] = '    <a href="' + JSONObj.CateAdvText[0].Link + '" class="menu__promo promo" title="' + JSONObj.CateAdvText[0].H1Heading + '">';
+                    sHtml[sHtml.length] = '        <div class="promo__title">' + JSONObj.CateAdvText[0].H1Heading + '</div>';
+                    sHtml[sHtml.length] = '        <div class="promo__sub-title">' + JSONObj.CateAdvText[0].H2Heading + '</div>';
+                    sHtml[sHtml.length] = '        <div class="promo__price">' + JSONObj.CateAdvText[0].H3Heading + '</div>';
+                    sHtml[sHtml.length] = '        <div class="promo__btn">SHOP NOW　<i class="fa fa-angle-right" aria-hidden="true"></i>';
+                    sHtml[sHtml.length] = '        </div>';
+                    sHtml[sHtml.length] = '    </a>';
+                }
+
+                sHtml[sHtml.length] = '</div>';
+
+                return sHtml.join('');
+
+            };
+
+
+            //處理手機版Footer中間那顆最新優惠的連結
+            this.mobileFooterLink = function (Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+                if (jsonObj.length > 0) {
+
+                    $('.B2EMKPromoLink a').attr('href', jsonObj[0].Link);
+                }
+            };
+
+        };
+
+        /* Functions */
+        that.Funs = new function () {
+
+            this.checkEDMPath = function(){
+
+                if(location.href.indexOf('/edm/tlw') != -1 || location.href.indexOf('/edm/hola') != -1 || location.href.indexOf('/edm/hoi') != -1 || location.href.indexOf('/edm/crateandbarrel') != -1 || location.href.indexOf('/edm/cnb') != -1)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            };
+
+            this.fixheader = function () {
+
+                if(getHeaderSiteID != 'TRPlus' || that.Funs.checkEDMPath())
+                {
+                    return false;
+                }
+
+                if ($('.ASM_header').length) return
+                var $stickyTop = $('header')
+                if (document.body.clientWidth < 990) {
+                    // 手機版浮動
+                    $stickyTop.css({
+                        position: 'fixed',
+                        width: '100%'
+                    })
+                    $('main').css('padding-top', $stickyTop.height())
+                } else {
+                    $(window).scroll(function () {
+                        $scrollTop = $(window).scrollTop()
+                        if (topGreenLenght) {
+                            if ($scrollTop > 31) {
+                                $('.fixBox').css({
+                                    position: 'fixed',
+                                    width: '100%'
+                                })
+                                $('#desktopMenu').css('margin-top', 77)
+                            }
+                            else {
+                                $('#desktopMenu').css('margin-top', 0)
+                                $('.fixBox').css({
+                                    position: 'inherit'
+                                })
+                            }
+                        } else {
+                            $('.fixBox').css({
+                                position: 'fixed',
+                                width: '100%'
+                            })
+                            $('#desktopMenu').css('margin-top', 77)
+                        }
+
+                    })
+                }
+            }
+
+            this.goTop = function () {
+                // 回到頂端的操作                
+                //if ( $('.product.level2,.product.level3,.product.level4,.product.level5,.product.search').length === 0 ) return
+                var $gotopBtn = $('.goTop')
+
+                $gotopBtn.click(function() {
+                    $('body, html').animate({
+                      scrollTop: 0
+                    }, 500, 'swing' , function(){
+                        $gotopBtn.hide()
+                    });
+                  });
+
+                $(window).scroll(function(){
+                    
+                  if ($(this).scrollTop() < screen.availHeight){
+                    $gotopBtn.hide()  
+                  } else {
+                    $gotopBtn.show()
+                  }
+                 
+                })
+              
+                
+            }
+
+            this.checkCategoryLink = function (isMainChannelCategory, isLastNode, CateUrl) {
+
+                var setCateUrl = CateUrl;
+                var setCateStyle = '';
+
+                return { 'setCateUrl': setCateUrl, 'setCateStyle': setCateStyle };
+            };
+
+
+            this.checkHasData = function (jsonObj) {
+                var DataOK = false;
+                if (jsonObj && jsonObj != null && jsonObj != {} && ConverCont(jsonObj).length > 0) {
+                    DataOK = true;
+                }
+
+                return DataOK;
+            };
+
+            this.checkCookie = function () {
+
+                var cookieEnabled = navigator.cookieEnabled;
+                if (!cookieEnabled) {
+                    document.cookie = "testcookie";
+                    cookieEnabled = document.cookie.indexOf("testcookie") != -1;
+                }
+                //return cookieEnabled || showCookieFail();
+            };
+
+            //處理 json_headerAdv
+            //讀取 TRPlus header SON files { "header_TopLeftLink", "header_TopRightLink", "header_SearchText", "header_MenuLogLeft", "header_MenuLogRight","header_LogoPlus","trplus_logo","header_underNavBanner" }
+            this.TRPlusHeaderAdv = function (Obj) {
+
+                var headerAdvAry = ["header_TopLeftLink", "header_TopRightLink", "header_SearchText", "header_MenuLogLeft", "header_LogoPlus", "header_MemberMenu", "mobileFooter_link", "trplus_logo", "header_underNavBanner"];
+                var jsonObj = $.parseJSON(Obj);
+                // 在這裡統一刷掉已過期時間
+                var nowUTC = Date.UTC(parseInt(nowServerYear), parseInt(nowServerMonth), parseInt(nowServerDay), parseInt(nowServerHour), parseInt(nowServerMinute), 0, 0)
+
+                for( v in jsonObj){
+                    // jsonObj[v] 為 Array
+                    var newJsonObjArray =  JSON.parse(JSON.stringify(jsonObj[v]))
+                    jsonObj[v] = []
+                    newJsonObjArray.forEach(function(element, index) {
+                        if (element.EndTime) {
+                            var EndTimeArray = element.EndTime.replace(/\/|-| |:/g, ',').split(',')
+                            var dataUct = Date.UTC(parseInt(EndTimeArray[0]), parseInt(EndTimeArray[1]), parseInt(EndTimeArray[2]), parseInt(EndTimeArray[3]), parseInt(EndTimeArray[4]), 0, 0)
+                            if (nowUTC < dataUct){ // 表示未過期
+                                jsonObj[v].push(element)
+                            }
+                        }
+                    });
+                }
+                for (var i = 0, j = headerAdvAry.length; i < j; i++) {
+                    switch (headerAdvAry[i]) {
+                        case ('header_TopLeftLink'):
+                            {
+                                if (jsonObj[headerAdvAry[i]]) {
+                                    that.BuildHTML.HeaderAdvTopLeftLink(jsonObj[headerAdvAry[i]]);
+                                }
+
+                                break;
+                            };
+                        case ('header_SearchText'):
+                            {
+                                if (jsonObj[headerAdvAry[i]]) {
+                                    that.BuildHTML.HeaderAdvSearchText(jsonObj[headerAdvAry[i]]);
+                                }
+                                break;
+                            };
+                        case ('header_LogoPlus'):
+                            {
+                                if (jsonObj[headerAdvAry[i]]) {
+                                    that.BuildHTML.HeaderAdvLogoPlus(jsonObj[headerAdvAry[i]]);
+                                }
+                                break;
+                            };
+                        case ('header_MenuLogLeft'):
+                            {
+                                //that.BuildHTML.HeaderAdvMenuLogLeft(jsonObj[headerAdvAry[i]]);
+                                break;
+                            };
+                        case ('header_MenuLogRight'):
+                            {
+                                //that.BuildHTML.HeaderAdvMenuLogRight(jsonObj[headerAdvAry[i]]);
+                                break;
+                            };
+                        case ('header_MemberMenu'):
+                            {
+                                if (jsonObj[headerAdvAry[i]]) {
+                                    that.BuildHTML.HeaderMemberMenu(jsonObj[headerAdvAry[i]]);
+                                }
+                                break;
+                            };
+                        case ('mobileFooter_link'):
+                            {
+                                if (jsonObj[headerAdvAry[i]]) {
+
+                                    //處理手機版Footer中間那顆最新優惠的連結
+                                    that.BuildHTML.mobileFooterLink(jsonObj[headerAdvAry[i]]);
+                                }
+                                break;
+                            };
+                        case ('header_underNavBanner'):
+                            {
+                                var $adBox = $('div.adBox');
+                                var $close = $adBox.find('a.close');
+                                var $main = $('main');
+                                if (jsonObj.header_underNavBanner) {
+                                    if (jsonObj.header_underNavBanner.length && $adBox.length && trMain !== 'iframePage') {
+                                        $adBox.show()
+                                        $main.prepend($adBox);
+                                        $adBox.append('<a href="' + jsonObj.header_underNavBanner[0].Link + '"><img src="' + jsonObj.header_underNavBanner[0].Image + '" /><img src="' + jsonObj.header_underNavBanner[0].MobileImage + '" /></a>')
+                                        $close.click(function () {
+                                            $adBox.slideUp();
+                                        })
+
+                                        if (jsonObj.header_underNavBanner[0].LinkTarget === 'Y') {
+                                            $adBox.find('a').eq(1).attr('target', '_blank');
+                                        }
+                                    }
+                                    else {
+                                        $adBox.remove();
+                                    }
+
+                                } else {
+                                    $adBox.remove();
+                                }
+                                break;
+                            };
+                    };
+                }
+            };
+
+
+
+
+            //ajax讀取TRPlus大分類清單
+            this.getTRPlusLcates = function () {
+                //if (document.getElementById('desktopMenu') === null) return
+                
+
+                _mgr.Ajax.getTRPlusLCates(function (json) {
+
+                    if (json === 'localStorage'){
+                        // 取得 回來的資料是 localStorage
+                        json = localStorage.getItem(siteID+'_jsonString')
+                    } else {
+                        localStorage.setItem(siteID+'_jsonString',json); // 儲存 TRPlus 分類樹
+                    }
+                    
+                    that.AjaxCallBack.CB_getTRPlusLCates(json);
+                });
+            };
+
+            //call 小購物車ajax 取得小購物車商品列表以及小購物車商品數量
+            this.callAjaxGetSmallCartLists = function () {
+                var ref = {};
+
+                _mgr.Ajax.getSmallCartLists(ref, function (json) {
+                    that.AjaxCallBack.CB_getSmallCartListss(ref, json);
+                });
+            };
+
+
+            this.updateMobileCatePagesLink = function () {
+
+                switch (getHeaderSiteID) {
+                    case 'TRPlus':
+                        $('.mobileCatePagesLink').attr('href', '/TRPlusMobileCategory');
+                        break;
+                    case 'TLW':
+                        $('.mobileCatePagesLink').attr('href', '/TRPlusMobileCategory');
+                        break;
+                    case 'HOLA':
+                        $('.mobileCatePagesLink').attr('href', '/TRPlusMobileCategory');
+                        break;
+                    case 'CB':
+                        $('.mobileCatePagesLink').attr('href', '/TRPlusMobileCategory');
+                        break;
+                    default:
+                        $('.mobileCatePagesLink').attr('href', '/TRPlusMobileCategory');
+                }
+
+
+                //$('.mobileCatePagesLink').attr('href', '/TRPlusMobileCategory');
+            };
+
+            this.init = function () {
+
+                // 固定住 HEADER
+                that.Funs.fixheader()
+
+                // gotop 回到最上
+                that.Funs.goTop()
+
+                //check瀏覽器是否接受cookie
+                that.Funs.checkCookie();
+
+                if (typeof jRespond === 'undefined') {
+                    // console.log('responsiveClasses: jRespond not Defined.');
+                    return true;
+                }
+
+                var jRes = jRespond([{
+                    label: 'smallest',
+                    enter: 0,
+                    exit: 479
+                }, {
+                    label: 'handheld',
+                    enter: 480,
+                    exit: 767
+                }, {
+                    label: 'tablet',
+                    enter: 768,
+                    exit: 991
+                }, {
+                    label: 'laptop',
+                    enter: 992,
+                    exit: 1199
+                }, {
+                    label: 'desktop',
+                    enter: 1200,
+                    exit: 10000
+                }]);
+                jRes.addFunc([{
+                    breakpoint: 'desktop',
+                    enter: function () { $body.addClass('device-lg'); },
+                    exit: function () { $body.removeClass('device-lg'); }
+                }, {
+                    breakpoint: 'laptop',
+                    enter: function () { $body.addClass('device-md'); },
+                    exit: function () { $body.removeClass('device-md'); }
+                }, {
+                    breakpoint: 'tablet',
+                    enter: function () { $body.addClass('device-sm'); },
+                    exit: function () { $body.removeClass('device-sm'); }
+                }, {
+                    breakpoint: 'handheld',
+                    enter: function () { $body.addClass('device-xs'); },
+                    exit: function () { $body.removeClass('device-xs'); }
+                }, {
+                    breakpoint: 'smallest',
+                    enter: function () { $body.addClass('device-xxs'); },
+                    exit: function () { $body.removeClass('device-xxs'); }
+                }]);
+
+                
+                //ajax讀取TRPlus大分類清單
+                if (!isCartPage) {
+                    if(isHeaderFooterHide != 'true')
+                    {
+                        that.Funs.getTRPlusLcates();
+                    }
+                }
+
+                var switchHeaderSiteID = getHeaderSiteID.toUpperCase();
+
+                // 各通路含TR+通用 HeaderAdv 廣告
+                if (that.Funs.checkHasData(json_headerAdv)) {
+                    that.Funs.TRPlusHeaderAdv(json_headerAdv);
+                }
+
+
+                //update mobileCatePagesLink
+                that.Funs.updateMobileCatePagesLink();
+
+
+                //讀取footer SON files { "footer_GroupLink_1", "footer_GroupLink_2", "footer_GroupLink_3", "footer_GroupLink_4", "footer_GroupLink_5" }
+                if (that.Funs.checkHasData(json_footerGroup)) {
+                    that.BuildHTML.FooterGroup(json_footerGroup);
+                }
+
+                //讀取點數
+                /*
+                if(trIsLogin == 'true'){
+                    var ref = {};
+
+                    _mgr.Ajax.getPoints(ref, function(json) {
+                        that.AjaxCallBack.CB_getPoints(ref, json);
+                    });
+                }
+                */
+
+                $('.slider-menu-category').hide();
+
+            };
+
+            this.initRegisterEvent = function () {
+
+                var oLCateTimer;
+
+
+                //將商品加入購物車
+                $(document).on('click', '.prod-item-doAddtoCart', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    if ($(this).find('i').hasClass('addToCartinProcess')) {
+                        return;
+                    }
+
+                    $(this).find('i').removeClass('fa-shopping-cart').addClass('addToCartinProcess');
+                    $(this).find('i').append('<img src="/_ui/responsive/theme-trplus/images/loading5.gif">');
+                    $(this).find('img').show();
+
+                    var getAttr_GDPPRC = $(this).attr('GDPPRC');
+                    var getAttr_GDPRC = $(this).attr('GDPRC');
+                    var getAttr_GDCPRC = $(this).attr('GDCPRC');
+
+                    var getDataLayerPRC;
+
+                    //// console.log('click add to cart');
+                    var getGDID = $(this).attr('GDID');
+                    var ref = {
+                        productCodePost: getGDID,
+                        qty: '1',
+                        catePath: GDCatePath
+                    };
+
+
+                    _mgr.Ajax.doAddtoCart(ref, function (json) {
+                        that.AjaxCallBack.CB_doAddtoCart(ref, json);
+                    });
+
+                    //Appier 廣告，加入購物車
+                    (function () {
+
+                        var appierRtGDID = '';
+
+                        if (getAttr_GDPPRC != '') {
+                            appierRtGDID = getAttr_GDPPRC;
+                            getDataLayerPRC = getAttr_GDPPRC;
+                        }
+                        else if (getAttr_GDPRC != '') {
+                            appierRtGDID = getAttr_GDPRC;
+                            getDataLayerPRC = getAttr_GDPPRC;
+                        }
+                        else {
+                            appierRtGDID = getAttr_GDCPRC;
+                            getDataLayerPRC = getAttr_GDPPRC;
+                        }
+
+                        var appierRtAddToCart = [{ "productID": getGDID, "unit": "1", "price": appierRtGDID }];
+                        // 若無法回傳購買數量，該欄位請回傳空字串:
+                        // 例如: 回傳 appierRtAddToCart = [{"productID":"ID1234", "unit":"", "price":"500"}] 
+                        //========= PLEASE DO NOT CHANGE BELOW =========
+                        if (typeof (window.APPIER_RETARGET) == 'undefined') {
+                            (function (w, d, s, m) {
+                                var f = d.getElementsByTagName('script')[0],
+                                    j = d.createElement('script'),
+                                    ns = 'APPIER_RETARGET';
+                                w._appierSendQueue = w._appierSendQueue || [];
+                                w['appierRetargetJson'] = { id: s, site: m };
+                                j.async = true;
+                                j.src = '//jscdn.appier.net/aa.js?id=' + m;
+                                f.parentNode.insertBefore(j, f);
+                                !w[ns] && (w[ns] = {});
+                                (!w[ns].send) && (w[ns].send = function (j) {
+                                    w._appierSendQueue.push(j);
+                                });
+                            })(window, document, "nzgE", "trplus.com.tw");
+                        }
+                        window.APPIER_RETARGET.send({ "t": "type_addcart", "itemList": appierRtAddToCart });
+                    })();
+
+                    // gtmProdImpressions 為本頁所有商品
+                    for (var i = 0, j = gtmProdImpressions.length; i < j; i++) {
+                        if (gtmProdImpressions[i].id == getGDID) {
+
+
+                            var gtmListNmame = 'Home';
+                            switch (pageMainCssClasses) {
+                                case 'TRPlus':
+                                    gtmListNmame = 'Home';
+                                    break;
+                                case 'TLW':
+                                    gtmListNmame = 'Home-T';
+                                    break;
+                                case 'Hola':
+                                    gtmListNmame = 'Home-H';
+                                    break;
+                                case 'hoi':
+                                    gtmListNmame = 'Home-hoi';
+                                    break;
+                                case 'cb':
+                                    gtmListNmame = 'Home-cb';
+                                    break;
+                                case 'CategoryPage':
+
+                                    if (SEOCategoryTreeID) {
+                                        var getGTMFinalCateIDAry = SEOCategoryTreeID.split(',');
+                                        var getGTMAppierFinalCateIDAry = [];
+
+                                        for (var i = 0, j = getGTMFinalCateIDAry.length; i < j; i++) {
+                                            if ($.trim(getGTMFinalCateIDAry[i]) != '') {
+                                                getGTMAppierFinalCateIDAry[getGTMAppierFinalCateIDAry.length] = getGTMFinalCateIDAry[i];
+                                            }
+                                        }
+
+                                        var nowGTMCategoryID = getGTMAppierFinalCateIDAry[(getGTMAppierFinalCateIDAry.length - 1)];
+
+                                        //gtmListNmame = 'EC_' + nowGTMCategoryID;
+                                        gtmListNmame = nowGTMCategoryID;
+                                    }
+                                    else {
+                                        gtmListNmame = 'CategoryPage';
+                                    }
+                                    break;
+                                case 'ProductListPage':
+
+                                    if (SEOCategoryTreeID) {
+                                        var getGTMFinalCateIDAry = SEOCategoryTreeID.split(',');
+                                        var getGTMAppierFinalCateIDAry = [];
+
+                                        for (var i = 0, j = getGTMFinalCateIDAry.length; i < j; i++) {
+                                            if ($.trim(getGTMFinalCateIDAry[i]) != '') {
+                                                getGTMAppierFinalCateIDAry[getGTMAppierFinalCateIDAry.length] = getGTMFinalCateIDAry[i];
+                                            }
+                                        }
+
+                                        var nowGTMCategoryID = getGTMAppierFinalCateIDAry[(getGTMAppierFinalCateIDAry.length - 1)];
+
+                                        //gtmListNmame = 'EC_' + nowGTMCategoryID;
+                                        gtmListNmame = nowGTMCategoryID;
+                                    }
+                                    else {
+                                        gtmListNmame = 'Category';
+                                    }
+                                    //gtmListNmame = 'Category';
+                                    break;
+                                case 'search':
+                                    gtmListNmame = 'Search Results';
+                                    break;
+                                case 'productDetails':
+                                    gtmListNmame = 'Product';
+                                    break;
+                                default:
+                                    gtmListNmame = 'Home';
+                                    break;
+                            }
+
+
+                            //alert('getGDID = ' + getGDID);
+                            //alert('gtmListNmame = ' + gtmListNmame);
+                            //alert('gtmProdImpressions['+ i +'] = ' + JSON.stringify(gtmProdImpressions[i]))
+
+                            dataLayer.push({
+                                'event': 'addToCart',
+                                'ecommerce': {
+                                    'actionField': { 'list': gtmListNmame },
+                                    'currencyCode': 'TWD',
+                                    'add': {
+                                        'products': [gtmProdImpressions[i]]
+                                    }
+                                },
+                                'productid': getGDID,
+                                'prices': getDataLayerPRC,
+                                'quantities': '1',
+                                'brand': (getBrandChineseName) ? getBrandChineseName : ''  //依照所在產品線不同去送出值 ex.特力屋/特力+/HOLA
+                            });
+
+
+                        }
+                    }
+
+                });
+
+
+                //增強型電子商務埋設 Product Clicks
+                $(document).on('click', '.gtmImpressions_prod-URL', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    var isScupioProd = 'N';
+
+                    var realURL = $(this).attr('href');
+                    var getGDID
+                    console.log(realURL)
+                    if (realURL.indexOf('scupio') !== -1) {
+                        isScupioProd = $(this).attr('isScupio').toUpperCase();
+                        getGDID = realURL.split('it=')[1].substring(0,9)
+                    } else {
+                        getGDID = realURL.split('/')[realURL.split('/').length-1];
+                    }
+
+                   
+
+                    //alert('isScupioProd = ' + isScupioProd);
+                    //alert('realURL = ' + realURL);
+                    console.log('getGDID = ' + getGDID);
+                    var j = gtmProdImpressions.length;
+                    console.log('開始在gtmProdImpressions 找商品');
+
+                    if(j==0)
+                    {
+                        document.location = realURL;
+                    }
+
+                    for (var i = 0; i < j; i++) {
+                        if (gtmProdImpressions[i].id == getGDID) {
+                            console.log('在gtmProdImpressions 找到了被點選商品')
+                            var gtmListNmame = 'Home';
+                            switch (pageMainCssClasses) {
+                                case 'TRPlus':
+                                    gtmListNmame = 'Home';
+                                    break;
+                                case 'TLW':
+                                    gtmListNmame = 'Home-T';
+                                    break;
+                                case 'Hola':
+                                    gtmListNmame = 'Home-H';
+                                    break;
+                                case 'hoi':
+                                    gtmListNmame = 'Home-hoi';
+                                    break;
+                                case 'cb':
+                                    gtmListNmame = 'Home-cb';
+                                    break;
+                                case 'CategoryPage':
+                                    if (realCategoryTreeID && SEOCategoryTreeID != '') {
+                                        gtmListNmame = realCategoryTreeID[realCategoryTreeID.length-1].split('/c/')[1];
+                                    }
+                                    else {
+                                        gtmListNmame = 'CategoryPage';
+                                    }
+                                    break;
+                                case 'ProductListPage':
+
+                                    if (SEOCategoryTreeID && SEOCategoryTreeID != '') {
+                                        var getGTMFinalCateIDAry = SEOCategoryTreeID.split(',');
+                                        var getGTMAppierFinalCateIDAry = [];
+
+                                        for (var i = 0, j = getGTMFinalCateIDAry.length; i < j; i++) {
+                                            if ($.trim(getGTMFinalCateIDAry[i]) != '') {
+                                                getGTMAppierFinalCateIDAry[getGTMAppierFinalCateIDAry.length] = getGTMFinalCateIDAry[i];
+                                            }
+                                        }
+
+                                        var nowGTMCategoryID = getGTMAppierFinalCateIDAry[(getGTMAppierFinalCateIDAry.length - 1)];
+
+                                        //gtmListNmame = 'EC_' + nowGTMCategoryID;
+                                        gtmListNmame = nowGTMCategoryID;
+                                    }
+                                    else {
+                                        gtmListNmame = 'Category';
+                                    }
+                                    //gtmListNmame = 'Category';
+                                    break;
+                                case 'search':
+                                    gtmListNmame = 'Search Results';
+                                    break;
+                                case 'productDetails':
+                                    gtmListNmame = 'Product';
+                                    break;
+                                default:
+                                    gtmListNmame = 'Home';
+                                    break;
+                            }
+                            // 將此操作記錄進入 dataLayer
+                            console.log(i)
+                            console.log('找到了~!')
+                            console.log(gtmProdImpressions[i])
+                            dataLayer.push({
+                                'event': 'productClick',
+                                'ecommerce': {
+                                    'click': {
+                                        'actionField': { 'list': gtmListNmame },
+                                        'products': [{
+                                            'name': gtmProdImpressions[i].name,
+                                            'id': gtmProdImpressions[i].id,
+                                            'price': gtmProdImpressions[i].price,
+                                            'brand': '',
+                                            'category': '',
+                                            'variant': '',
+                                            'position': ''
+                                        }]
+                                    }
+                                },
+                                'eventCallback': function () {
+                                    // 真的找到了才連結出去 否則失效
+                                    //document.location = gtmProdImpressions[i].url
+                                    document.location = realURL;
+                                }
+                            });
+                            break; //中斷
+                        }
+                        else
+                        {
+                            document.location = realURL;
+                        }
+                    }
+                    
+                });
+
+
+                var oSmallCartTimer;
+                $(document).on({
+                    mouseenter: function (e) {
+                        //停止泡泡事件發生
+                        $.cancelBubble(e);
+
+                        oSmallCartTimer = setTimeout(function () {
+                            that.Funs.callAjaxGetSmallCartLists();
+
+                            if (trIsLogin == 'true' && (!$('.main-nav__account--login').hasClass('hasGetPoints'))) {
+                                var ref = {};
+
+                                _mgr.Ajax.getPoints(ref, function (json) {
+                                    that.AjaxCallBack.CB_getPoints(ref, json);
+                                });
+                            }
+
+
+                        }, 100);
+                    },
+                    mouseleave: function () {
+                        clearTimeout(oSmallCartTimer);
+                    }
+                }, ".main-nav__cart-show");
+
+
+
+                var oMemDropDownTimer;
+                $(document).on({
+                    mouseenter: function (e) {
+                        //停止泡泡事件發生
+                        $.cancelBubble(e);
+
+                        oMemDropDownTimer = setTimeout(function () {
+                            if (trIsLogin == 'true' && (!$('.main-nav__account--login').hasClass('hasGetPoints'))) {
+                                var ref = {};
+
+                                _mgr.Ajax.getPoints(ref, function (json) {
+                                    that.AjaxCallBack.CB_getPoints(ref, json);
+                                });
+                            }
+                        }, 150);
+                    },
+                    mouseleave: function () {
+                        clearTimeout(oMemDropDownTimer);
+                    }
+                }, ".main-nav__account--login");
+
+
+
+                $(document).on('click', '.main-nav__cart-show', function (e) {
+                    //停止泡泡事件發生
+                    if (!$('body').hasClass('device-lg')) {
+                        location.href = '/cart?useBonus=Y'
+                    }
+                });
+                if (!$('body').hasClass('device-lg')) { }
+
+                //將商品從購物車移除
+                $(document).on('click', '.prod-item-doRemoveFromCart', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    // console.log('prod-item-doRemoveFromCart');
+                    var getCartType = $(this).attr('cartType');
+                    var getGDID = $(this).attr('GDID');
+                    var getGDEN = $(this).attr('GDEN');
+                    var getGDQTY = $(this).attr('GDQTY');
+                    var getGDPRC = $(this).attr('GDPRC');
+                    var getGDNM = '';
+
+                    var ref = {
+                        entryNumber: parseInt(getGDEN),
+                        initialQuantity: parseInt(getGDQTY),
+                        productCode: getGDID,
+                        quantity: 0,
+                        type: getCartType
+                    };
+
+
+                    _mgr.Ajax.doRemoveItemFromCart(ref, function (json) {
+                        that.AjaxCallBack.CB_doRemoveItemFromCart(ref, json);
+                    });
+
+
+                    //alert('smallCartLists.rtnJson.Results.length = ' + smallCartLists.rtnJson.Results.length);
+                    var sendRemoveDataToGA = false;
+
+                    var gtmListNmame = 'Home';
+                    switch (pageMainCssClasses) {
+                        case 'TRPlus':
+                            gtmListNmame = 'Home';
+                            break;
+                        case 'TLW':
+                            gtmListNmame = 'Home-T';
+                            break;
+                        case 'Hola':
+                            gtmListNmame = 'Home-H';
+                            break;
+                        case 'hoi':
+                            gtmListNmame = 'Home-hoi';
+                            break;
+                        case 'cb':
+                            gtmListNmame = 'Home-cb';
+                            break;
+                        case 'CategoryPage':
+
+                            if (SEOCategoryTreeID) {
+                                var getGTMFinalCateIDAry = SEOCategoryTreeID.split(',');
+                                var getGTMAppierFinalCateIDAry = [];
+
+                                for (var i = 0, j = getGTMFinalCateIDAry.length; i < j; i++) {
+                                    if ($.trim(getGTMFinalCateIDAry[i]) != '') {
+                                        getGTMAppierFinalCateIDAry[getGTMAppierFinalCateIDAry.length] = getGTMFinalCateIDAry[i];
+                                    }
+                                }
+
+                                var nowGTMCategoryID = getGTMAppierFinalCateIDAry[(getGTMAppierFinalCateIDAry.length - 1)];
+
+                                //gtmListNmame = 'EC_' + nowGTMCategoryID;
+                                gtmListNmame = nowGTMCategoryID;
+                            }
+                            else {
+                                gtmListNmame = 'CategoryPage';
+                            }
+                            break;
+                        case 'ProductListPage':
+
+                            if (SEOCategoryTreeID) {
+                                var getGTMFinalCateIDAry = SEOCategoryTreeID.split(',');
+                                var getGTMAppierFinalCateIDAry = [];
+
+                                for (var i = 0, j = getGTMFinalCateIDAry.length; i < j; i++) {
+                                    if ($.trim(getGTMFinalCateIDAry[i]) != '') {
+                                        getGTMAppierFinalCateIDAry[getGTMAppierFinalCateIDAry.length] = getGTMFinalCateIDAry[i];
+                                    }
+                                }
+
+                                var nowGTMCategoryID = getGTMAppierFinalCateIDAry[(getGTMAppierFinalCateIDAry.length - 1)];
+
+                                //gtmListNmame = 'EC_' + nowGTMCategoryID;
+                                gtmListNmame = nowGTMCategoryID;
+                            }
+                            else {
+                                gtmListNmame = 'Category';
+                            }
+
+                            break;
+                        case 'search':
+                            gtmListNmame = 'Search Results';
+                            break;
+                        case 'productDetails':
+                            gtmListNmame = 'Product';
+                            break;
+                        default:
+                            gtmListNmame = 'Home';
+                            break;
+                    }
+
+
+
+
+
+                    if (smallCartLists.rtnJson.preOrderCart.length > 0 && !sendRemoveDataToGA) {
+                        for (var i = 0, j = smallCartLists.rtnJson.preOrderCart.length; i < j; i++) {
+                            if (smallCartLists.rtnJson.preOrderCart[i].GDID == getGDID) {
+                                getGDNM = smallCartLists.rtnJson.preOrderCart[i].GDNM;
+                                sendRemoveDataToGA = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (smallCartLists.rtnJson.deliveryPickupCart.length > 0 && !sendRemoveDataToGA) {
+                        for (var i = 0, j = smallCartLists.rtnJson.deliveryPickupCart.length; i < j; i++) {
+                            if (smallCartLists.rtnJson.deliveryPickupCart[i].GDID == getGDID) {
+                                getGDNM = smallCartLists.rtnJson.deliveryPickupCart[i].GDNM;
+                                sendRemoveDataToGA = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (sendRemoveDataToGA) {
+                        dataLayer.push({
+                            'event': 'removeFromCart',
+                            'ecommerce': {
+                                'remove': {
+                                    'actionField': { 'list': gtmListNmame },
+                                    'products': [{
+                                        'name': getGDNM,
+                                        'id': getGDID,
+                                        'price': getGDPRC,
+                                        'brand': '',
+                                        'category': '',
+                                        'variant': '',
+                                        'quantity': getGDQTY
+                                    }]
+                                }
+                            }
+                        });
+                    }
+
+
+
+
+
+                });
+
+                //加入購物車後的popup，click 結帳
+                $(document).on('click', '.prodetail-item-goCartPage', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    location.href = '/cart?type=InStock&useBonus=Y';
+                });
+
+                $('.main-nav__search').on('click', '.fa-search', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    var getSearcKW = $(".main-nav__search input[name='search']").val().trim();
+                    $.trim(getSearcKW);
+
+
+                    var categoryCode = $('.search-limit').val();
+
+                    if (getSearcKW == '') {
+                        alert('請輸入商品名稱、編號或關鍵字！');
+                        $(".main-nav__search input[name='search']").val('');
+                        return false;
+                    }
+                    else {
+                        if (getSearcKW.indexOf("&") >= 0) {
+                            var reg = new RegExp("&", "g");
+                            getSearcKW = getSearcKW.replace(reg, "＆");
+                        }
+
+                        //location.href = encodeURI("/search/?text=" + getSearcKW);
+                        //location.href = encodeURI("/search/?q="+ getSearcKW +"&categoryCode="+ categoryCode +"&text=" + getSearcKW);&bwq
+                        //location.href = encodeURI("/search/?q="+ getSearcKW +"&bwq="+ encodeURIComponent(categoryCode) +"&text=" + getSearcKW);
+                        location.href = encodeURI("/search/?q=" + getSearcKW + "&bwq=" + categoryCode + "&text=" + getSearcKW);
+                    }
+                });
+
+                $(".main-nav__search").on('keyup', 'input[name="search"]', function (e) {
+                    var keycode = (event.keyCode ? event.keyCode : event.which);
+                    if (keycode == '13') {
+                        $('.fa-search').trigger('click');
+                    }
+                });
+
+                $(".main-nav__search").on('focus', 'input[name="search"]', function (e) {
+                    if ($(this).val() == '') {
+                        $(this).attr('placeholder', '');
+                    }
+                });
+
+                $(".main-nav__search").on('blur', 'input[name="search"]', function (e) {
+                    if ($(this).val() == '') {
+                        $(this).attr('placeholder', $(this).attr('defaultValue'));
+                    }
+                });
+
+
+
+
+
+
+                // 搜尋 自動完成
+                if ($("#searchKW").length > 0) {
+                    $("#searchKW").autocomplete(
+                        {
+                            classes: {"ui-autocomplete":"search"},
+                            source: function (request, response) {
+                                jQuery.ajax(
+                                    {
+                                        url: "/search/autocomplete",
+                                        dataType: "json",
+                                        data: {
+                                            Action: 'GetAutoCompleteTerms',
+                                            results: 100,
+                                            query: $("#searchKW").val(),
+                                            prefix: $("#searchKW").val()
+                                        },
+                                        success: function (data) {
+                                            if (data) {
+                                                if (data.length > 0) {
+                                                    response(jQuery.map(data, function (item) {
+                                                        return {
+                                                            value: item
+                                                        }
+                                                    }));
+                                                }
+                                            }
+                                        }
+                                    });
+                            },
+                            minLength: 1,
+                            select: function (event, ui) {
+                                //$( "#searchKW" ).val( $(this).attr('itemvlaue') );
+                                $("#searchKW").val(ui.item.value);
+                                //$('.n-search__submit').trigger('click');
+                            }
+                        })
+                        .autocomplete("instance")._renderItem = function (ul, item) {
+
+                            ul.addClass('search-autocomplete');
+
+                            var sKey = item.value;
+                            var nowKey = $("#searchKW").val();
+
+                            var getIndexNum = sKey.indexOf(nowKey);
+
+                            var sHTML = [];
+
+                            sHTML[sHTML.length] = sKey.substring(0, getIndexNum);
+                            sHTML[sHTML.length] = '<b>' + sKey.substring(getIndexNum, (getIndexNum + 1)) + '</b>';
+                            sHTML[sHTML.length] = sKey.substring(getIndexNum + 1);
+
+
+
+                            return $("<li></li>")
+                                .data("item.autocomplete", item)
+                                //.append( "<a>" + sHTML.join('') + "<span>" + item.Count + "</span></a>" )
+                                .append("<a>" + sHTML.join('') + "</a>")
+                                .appendTo(ul);
+
+                        };
+                }
+
+
+                $(".menu-xs__nav").on('click', '.mobileCatePagesLink', function (e) {
+
+                });
+
+                $(".slider-menu-pages").on('click', '.slider-menu-backlink', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    $('.slider-menu-category').hide();
+                    $('.slider-menu .slider-menu-pages').css('width', '100%');
+                    $('.slider-menu .slider-menu-pages .slider-menu-page').css('width', '10%');
+
+                    $('.slider-menu-pages').animate({
+                        left: '0px',
+                    }, 'fast');
+                });
+
+                $("#mLCate").on('click', '.item', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    $("#mLCate .item").removeClass('on');
+                    $(this).addClass('on');
+
+                    var getAttr_LcateID = $(this).attr('LcateID');
+
+                    $('.slider-menu-showSubHere .slider-menu-subcate').hide();
+                    $('.slider-menu-showSubHere .slider-menu-subcate').each(function () {
+                        if ($(this).attr('LcateID') == getAttr_LcateID) {
+                            $(this).show();
+                        }
+                    });
+
+                });
+
+                $(".slider-menu-category").on('click', '.lv1', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+                    var $target = e.target.nodeName.toUpperCase();
+
+                    //// console.log('$target = ' + $target);
+
+                    if ($target == 'A') {
+                        location.href = $(e.target).attr('href');
+                    }
+                    if ($target == 'SPAN') {
+                        location.href = $(e.target).parent().attr('href');
+                    }
+
+                    if ($(this).hasClass('active')) {
+                        $(".slider-menu-category .category-item").removeClass('active');
+                        $(".slider-menu-category .lv1").removeClass('active');
+                        $(".slider-menu-category .lv3").hide();
+                    }
+                    else {
+                        $(".slider-menu-category .category-item").removeClass('active');
+                        $(".slider-menu-category .lv1").removeClass('active');
+                        $(".slider-menu-category .lv3").hide();
+                        $(this).parent().addClass('active');
+                        $(this).addClass('active');
+                    }
+
+
+                });
+
+                $(".slider-menu-category").on('click', '.lv2', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    var getAttr_McateID = $(this).attr('McateID');
+
+                    var $target = e.target.nodeName.toUpperCase();
+
+                    //// console.log('$target = ' + $target);
+
+                    if ($target == 'A') {
+                        location.href = $(e.target).attr('href');
+                    }
+                    if ($target == 'SPAN') {
+                        location.href = $(e.target).parent().attr('href');
+                    }
+
+                    if ($(this).hasClass('active')) {
+                        $(".slider-menu-category .lv2").removeClass('active');
+                        $(".slider-menu-category .lv3").hide();
+                    }
+                    else {
+                        $(".slider-menu-category .lv2").removeClass('active');
+                        $(".slider-menu-category .lv3").hide();
+                        $(this).addClass('active');
+                        $(this).parent().find('.lv3').each(function () {
+                            if ($(this).attr('McateID') == getAttr_McateID) {
+                                $(this).show();
+                            }
+                        });
+                    }
+
+                    /*
+                    if(!$(this).hasClass('active'))
+                    {
+                        $(this).parent().find('.lv3').each(function() {
+                            if( $(this).attr('McateID') == getAttr_McateID ){
+                                $(this).show();
+                            }
+                        });
+                    }
+                    */
+
+                });
+
+                $(".slider-menu-category").on('click', '.slider-menu-cates a', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    $(".slider-menu-category .slider-menu-cates a").removeClass('active');
+                    $(this).addClass('active');
+                });
+
+
+                $(".main-nav__tools").on('click', '.shopping-tabs a', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+                    var getShoppingTab = $(this).attr('shoppingTab');
+                    var minicartCheckOutLink = '/cart?type=InStock&useBonus=Y';
+
+                    $('.main-nav__cart-show').attr('shoppingTab', 'deliveryPickupCart');
+
+                    if (getShoppingTab == 'preOrderCart') {
+                        minicartCheckOutLink = '/cart?type=PreOrder&useBonus=Y';
+                        $('.main-nav__cart-show').attr('shoppingTab', 'preOrderCart');
+                    }
+
+                    $('.minicart--checkout').attr('href', minicartCheckOutLink);
+
+                    $(this).parents('.shopping-tabs').find('li').removeClass('active');
+                    $(".main-nav__cart-lists .simplebar-content ul").hide();
+
+
+                    $(this).parent().addClass('active');
+                    $(".main-nav__cart-lists ." + getShoppingTab).show();
+                });
+
+
+                $('.slider-menu-cates').on('click', 'a', function (e) {
+                    //停止泡泡事件發生
+                    $.cancelBubble(e);
+
+
+                    if ($(this).hasClass('active')) {
+                        return false;
+                    }
+                    else {
+                        var getStoreID = $(this).attr('storeID');
+                        // console.log('getStoreID = ' + getStoreID);
+
+                        $('.slider-menu-cates a').removeClass('active');
+                        $(this).addClass('active')
+
+                        $('.slider-menu-loading').show();
+                        $('.owl-main-nav').hide();
+                        $('.slider-menu-showSubHere').hide();
+                    }
+
+
+
+                });
+
+            };
+        };
+    }
+
+    $(document).ready(function () {
+        var headFooterManager = new headFooter();
+        headFooterManager.Funs.initRegisterEvent();
+        headFooterManager.Funs.init();
+    });
+
+})();

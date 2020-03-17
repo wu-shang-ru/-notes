@@ -1,0 +1,327 @@
+﻿(function() {
+    function tlwHome() {
+
+        //define object
+        var that = this;
+        var _mgr = new function() {};
+        var siteID
+        switch (getHeaderSiteID) {
+            case 'crateandbarrel':
+                siteID = 'cb'
+                break 
+            case 'hoi': 
+                siteID = 'hoi'
+                break
+            case 'TLW': 
+                siteID = 'TLW'
+                break
+            case 'HOLA': 
+                siteID = 'Hola'
+                break
+        }
+
+        var siteIDtoLowerCase = siteID.toLowerCase(); // 轉全小寫於 Class  localStorage和廣告排程名稱通用 
+
+        var isGetHolaDropMenuJSON = false;
+
+
+        /* BuildUpHtmlString */
+        that.BuildHTML = new function() {
+            //處理Logo旁邊的slogan字串
+            this.logoStr = function(Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+
+
+                if(!($('body').hasClass('device-lg') || $('body').hasClass('device-md')))
+                {
+                    return false;
+                }
+
+                if (jsonObj.length > 0) {
+
+                    //console.log(jsonObj[0].Layout)
+
+                    //if(jsonObj[0].Layout.indexOf('img') != -1 || jsonObj[0].Layout == '')
+                    if(jsonObj[0].Layout.indexOf('img') != -1 || jsonObj[0].Layout == '')
+                    {
+
+                        if( $('body').hasClass('device-lg') || $('body').hasClass('device-md') )
+                        {
+                            //$('.main-nav__subtitle').css('margin', '20px auto');
+                        }
+                        else
+                        {
+                            //$('.main-nav__subtitle').css('margin', 'auto');
+                        }
+                        
+
+                        var isTargetBlank = (jsonObj[0].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+                        $('.main-nav__subtitle').html('').html('<a href="'+ jsonObj[0].Link +'" '+ isTargetBlank +'><img src="'+ jsonObj[0].Image +'"></a>');
+                    }
+                    else
+                    {
+                        $('.main-nav__subtitle').html('').text(jsonObj[0].Text);
+                    }
+                }
+            };
+
+            this.TRplusDropMenu = function(ref, JSONData) {
+                
+
+                if (!JSONData) {
+                    return false;
+                }
+
+                if (JSONData && JSONData.length > 0) {
+
+                    var sHtml = [];
+                    //sHtml[sHtml.length] = '<div class="dropdown-content">';
+                    sHtml[sHtml.length] = '    <ul class="menu__lg" style="margin-top:0px;width:1050px;">';
+                    for (var i = 0, j = JSONData.length; i < j; i++) {
+                        sHtml[sHtml.length] = '    <li class="trplus-level-one">';
+
+                        sHtml[sHtml.length] = '        <a href="' + JSONData[i].CateUrl + '" title="' + JSONData[i].CateName + '">' + JSONData[i].CateName + '</a>';
+                        sHtml[sHtml.length] = that.BuildHTML.TLWHolaDropMenu_MSCates(JSONData[i].subNodes);
+
+                        sHtml[sHtml.length] = '    </li>';
+                    }
+                    sHtml[sHtml.length] = '    </ul>';
+                    //sHtml[sHtml.length] = '</div>';
+
+                    $('.menu .active').after(sHtml.join(''));
+                    menu__md();
+
+                }
+            };
+
+            this.TLWHolaDropMenu_MSCates = function(JSONData) {
+                
+                var JSONObj = JSONData;
+                var sHtml = [];
+
+                if (JSONObj.length > 0) {
+
+                    sHtml[sHtml.length] = '<ul class="menu__md">';
+
+                    for (var i = 0, j = JSONObj.length; i < j; i++) {
+                        sHtml[sHtml.length] = '<li>';
+                        sHtml[sHtml.length] = '    <a href="' + JSONObj[i].CateUrl + '" title="' + JSONObj[i].CateName + '" cateID="' + JSONObj[i].CateID + '">' + JSONObj[i].CateName + '</a>';
+
+                        if (JSONObj[i].subNodes.length > 0) {
+                            sHtml[sHtml.length] = '    <ul class="menu__sm">';
+
+                            for (var m = 0, n = JSONObj[i].subNodes.length; m < n; m++) {
+
+                                //console.log(JSONObj[i].subNodes[m].CateID)
+                                sHtml[sHtml.length] = '        <li><a href="' + JSONObj[i].subNodes[m].CateUrl + '" cateID="' + JSONObj[i].subNodes[m].CateID + '">' + JSONObj[i].subNodes[m].CateName + '</a></li>';
+                            }
+
+                            sHtml[sHtml.length] = '    </ul>';
+                        }
+
+                        sHtml[sHtml.length] = '</li>';
+                    }
+
+                    sHtml[sHtml.length] = '</ul>';
+                }
+
+                return sHtml.join('');
+            };
+
+            //處理商品分類旁的B2E 廣告menu
+            this.custMenu = function(Obj) {
+                var jsonObj = Obj;
+                var sHtml = [];
+                console.log('其他通路NAV自選清單資料::')
+                console.log(Obj)
+                if(jsonObj.length == 0){
+                    return false;
+                }
+
+                if (jsonObj[0].$ref) return
+                
+                for(var i=0, j=jsonObj.length; i<j; i++){
+
+                    var isTargetBlank = (jsonObj[i].LinkTarget.toUpperCase() == 'Y') ? ' target="_blank"' : '';
+
+                    sHtml[sHtml.length] = '<li><a href="'+ jsonObj[i].Link +'" '+ isTargetBlank +'><p>'+ jsonObj[i].Text +'</p></a></li>';
+                }
+                $('.menu_'+siteIDtoLowerCase+'-cautcates').append(sHtml.join(''));
+            };
+
+        };
+
+        /* Functions */
+        that.Funs = new function() {
+
+
+            this.init = function() {
+                var jsonObj = $.parseJSON(json_headerAdv);
+
+                that.BuildHTML.logoStr(jsonObj[siteIDtoLowerCase+'_logostr']);
+
+                // that.BuildHTML.custMenu(jsonObj[siteIDtoLowerCase+'_custMenu']);
+
+                // 取得& 呈現下拉選單
+                
+                // if (!isGetHolaDropMenuJSON) {
+
+                //     var ref =  {storeID: 'TRPlus'}
+
+                //     var storageContentJson = localStorage.getItem('TRPlus_jsonString');
+                //     if (storageContentJson !== null && storageContentJson !=='localStorage') {
+                //         ref.storageHashCode = $.parseJSON(storageContentJson).resultHashCode
+                //     }
+
+                //     $.ajax({
+                //         url: '/category/menu',
+                //         type: 'POST',
+                //         data: ref,
+                //         success: function (data_1) {
+                //             if (data_1 === 'localStorage'){
+                //                 data_1 = localStorage.getItem('TRPlus_jsonString')
+                //             } else {
+                //                 localStorage.setItem('TRPlus_jsonString',data_1); // 儲存 TRPlus 分類樹
+                //             }
+
+
+                //             var ref =  {
+                //                 storeID: siteID,
+                //                 cateID: ''
+                //             }
+
+                //             var storageContentJson = localStorage.getItem(siteID+'_jsonString');
+                //             if (storageContentJson !== null && storageContentJson !=='localStorage') {
+                //                 ref.storageHashCode = $.parseJSON(storageContentJson).resultHashCode
+                //             }
+                            
+                            
+                //             $.ajax({
+                //                 url: '/category/menu',
+                //                 type: 'POST',
+                //                 data: ref,
+                //                 success: function (data_2) {
+
+                //                     if (data_2 === 'localStorage'){
+                //                         data_2 = localStorage.getItem(siteID+'_jsonString')
+                //                     } else {
+                //                         localStorage.setItem(siteID+'_jsonString',data_2); // 儲存 不同通路之 分類樹
+                //                     }
+
+                                    
+                //                     data_1 = $.parseJSON(data_1)
+                //                     data_2 = $.parseJSON(data_2)
+                //                     var newData = [data_1.storeCategory]
+ 
+                //                     newData[0].CateName = '看所有商品'
+                                    
+
+                //                     newData = newData.concat(data_2.storeCategory.subNodes)
+                //                     console.log('取得通路'+siteID+' 分類樹資料::')
+                //                     console.log(data_2.storeCategory.subNodes)
+                                    
+                //                     that.BuildHTML.TRplusDropMenu(ref, newData);
+                                    
+
+                //                     ///////
+
+                //                     if (typeof SEOCategoryTreeID === 'string'){                                    // 代表現正在列表分類頁，順帶把直塞入進去
+                //                     var minCategory;
+                //                     var elseCategory = [];
+                //                     var parentsdata
+                                    
+                //                     var listis = []
+                //                     realCategoryTreeID.forEach(function (element) {
+                //                         listis.push(element.split('/c/')[1])
+                //                     })
+                //                     // 註: 依賴正確的 SEOCategoryTreeID 否則找不到相對應的資料
+                                    
+
+                //                     var realOneself
+                //                     realOneself = { subNodes: data_2.storeCategory.subNodes }
+
+
+                //                     function findOneself(obj, listisI) {
+                //                         obj.subNodes.forEach(function (element) {
+                //                             if (element.CateID === listisI) {
+                //                                 realOneself = element
+                //                             }
+                //                         })
+                //                     }
+
+                //                     for (var i = 1; i < listis.length ; i++) { // 減一 表示顯示的是上一層
+
+                //                         findOneself(realOneself, listis[i])
+                //                     }
+
+                //                     if (realOneself.subNodes.length === 0 ){
+                //                         realOneself = { subNodes: data_2.storeCategory.subNodes }
+                
+                //                         // 其他非TR+的通路，由 elaeBrandHeaderNav.js 處理
+                
+                //                         function findOneself(obj, listisI) {
+                //                             obj.subNodes.forEach(function (element) {
+                //                                 if (element.CateID === listisI) {
+                //                                     realOneself = element
+                //                                 }
+                //                             })
+                //                         }
+                
+                
+                //                         for (var i = 1; i < listis.length-1 ; i++) { // 減一 表示顯示的是上一層
+                //                             findOneself(realOneself, listis[i])
+                //                         }
+                //                     }
+
+
+                //                     var topName, topurl
+                //                         //館 大 小 都用一樣的 (如果小的再往下篩會找不到更小的)
+                //                         data_2.storeCategory.subNodes.forEach(function (element) {
+                //                             if (element.CateID === listis[1]) {
+                //                                 topName = element.CateName
+                //                                 topurl = element.CateUrl
+                //                                 minCategory = element
+                //                             } else {
+                //                                 elseCategory.push({
+                //                                     CateUrl: element.CateUrl,
+                //                                     CateName: element.CateName
+                //                                 })
+                //                             }
+
+                //                         });
+
+
+                //                     console.log(minCategory)
+                //                     if (!minCategory) {
+                //                         console.log('無法在/category/menu '+ siteID +'通路之分類樹中找到本分類')
+                //                     } else {
+                //                         console.log(listis)
+                //                         madeLeftCategory(elseCategory, minCategory, listis.length, parentsdata, realOneself,listis,topName,topurl);
+                //                     }}
+
+                //                     ///////
+                //                 },
+        
+                //             });
+                //         },
+    
+                //     });
+                // }
+
+
+
+            };
+
+
+        };
+    }
+
+    $(document).ready(function() {
+        
+        if (getHeaderSiteID === 'TRPlus') return
+        var tlwHomeManager = new tlwHome();
+        tlwHomeManager.Funs.init();
+    });
+
+})();
