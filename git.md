@@ -30,6 +30,19 @@
 
 8. 至自己的github上按下`New pull request`按鈕，並送出，即可完成一次PR發送。
 
+- 每次欲更新檔案時，記得先pull上游看看有無更新資料，以免檔案衝突。
+
 ---
 
-- 每次欲更新檔案時，記得先pull上游看看有無更新資料，以免檔案衝突。
+# 分支
+
+- git branch 確認擁有的分支
+- git branch xxx 新增分支
+
+- git checkout dev 切換分支
+
+- git merge rogerBranch 合併分支 (在要合併的分支上輸入)
+
+- git log --oneline 確認git commit 資料
+
+- git branch -d <> 刪除分支
