@@ -46,3 +46,5 @@
 - git log --oneline 確認git commit 資料
 
 - git branch -d <> 刪除分支
+
+- git reset --hard HEAD~ 回復至上一個commit紀錄
